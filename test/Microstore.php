@@ -1,7 +1,7 @@
 <?php
 
 /**
- * A virtual datastore for testing the Mu api.
+ * A datastore for testing the Mu api.
  */
 class Microstore
 {

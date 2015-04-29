@@ -2,9 +2,8 @@
 
 use \Mu\Mu;
 
-class MuTest extends PHPUnit_Framework_TestCase
+class MuTest extends MuPHPUnitExtensions
 {
     
-
 
 }
