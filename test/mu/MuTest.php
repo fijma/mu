@@ -7,11 +7,12 @@ class MuTest extends MuPHPUnitExtensions
 {
     
     private $mu;
+    private $store;
 
     protected function setUp()
     {
-        $store = new TestStore();
-        $this->mu = new Mu($store);
+        $this->store = new TestStore();
+        $this->mu = new Mu($this->store);
     }
 
     public function test_mu_reports_the_store_its_using()
@@ -134,6 +135,57 @@ class MuTest extends MuPHPUnitExtensions
         $record_one['data']['message'] = "How're they hangin'?";
         $record_one = $this->mu->update($record_one);
         $this->mu->update($record_two);
+    }
+
+    public function test_mu_relates_records()
+    {
+        $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
+        $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
+        $this->mu->relate('link', $record_one['id'], $record_two['id']);
+        $this->assertEquals($this->store->show_relationships(), [['link', 1, 2]]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage 'From' record does not exist.
+     */
+    public function test_mu_relate_throws_an_exception_if_the_from_record_does_not_exist()
+    {
+        $this->mu->relate('link', 1, 2);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage 'To' record does not exist.
+     */
+    public function test_mu_relate_throws_an_exception_if_the_to_record_does_not_exist()
+    {
+        $this->mu->create('record', ['message' => "G'day cobber!"]);
+        $this->mu->relate('link', 1, 2);
+    }
+
+    public function test_mu_removes_relationships()
+    {
+        $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
+        $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
+        $this->mu->relate('link', $record_one['id'], $record_two['id']);
+        $this->assertEquals($this->store->show_relationships(), [['link', 1, 2]]);
+        $this->mu->unrelate('link', $record_one['id'], $record_two['id']);
+        $this->assertEmpty($this->store->show_relationships());
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Unable to remove relationship.
+     */
+    public function test_mu_throws_an_exception_if_it_cannot_remove_a_relationship()
+    {
+        $this->mu->unrelate('ExceptionTest', 1, 2);
+    }
+
+    public function test_mu_does_nothing_if_it_cant_find_the_relationship_to_remove()
+    {
+        $this->mu->unrelate('link', 1, 2);
     }
 
 }

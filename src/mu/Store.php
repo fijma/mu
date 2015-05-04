@@ -43,4 +43,18 @@ abstract class Store
      */
     abstract public function update(Array $record);
 
+    /**
+     * Creates a relationship of the given type between two records.
+     * This function must throw an Exception on failure.
+     */
+    abstract public function relate($relationship_type, $from, $to);
+
+    /**
+     * Removes the given relationship.
+     * This function must not throw an Exception if the defined relationship does not exist.
+     * This function must throw an Exception if the defined relationship does exist
+     * but is not able to be deleted.
+     */
+    abstract public function unrelate($relationship_type, $from, $to);
+
 }

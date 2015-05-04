@@ -47,4 +47,16 @@ class Mu
         return $this->store->update($record);
     }
 
+    // Creates a relationship between two records. See \Mu\Store for documentation.
+    public function relate($relationship_type, $from, $to)
+    {
+        $this->store->relate($relationship_type, $from, $to);
+    }
+
+    // Removes a relationship between two records. See \Mu\Store for documentation.
+    public function unrelate($relationship_type, $from, $to)
+    {
+        $this->store->unrelate($relationship_type, $from, $to);
+    }
+
 }
