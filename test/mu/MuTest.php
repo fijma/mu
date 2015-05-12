@@ -188,4 +188,9 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->unrelate('link', 1, 2);
     }
 
+    public function test_mu_reports_its_version()
+    {
+        $this->assertEquals('0.9.0', $this->mu->version());
+    }
+
 }

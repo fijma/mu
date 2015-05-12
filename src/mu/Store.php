@@ -12,6 +12,9 @@ namespace Mu;
  *      'deleted' => boolean,            // flags whether record is deleted (no hard deletes)
  *         'data' => ['key' => value...] // array of key/value pairs of record properties
  *     ]
+ * 
+ * Field type arrays are of the following form:
+ *     ['fieldtype_name' => 'implementing_class', ...]
  *
  */
 abstract class Store
@@ -57,4 +60,8 @@ abstract class Store
      */
     abstract public function unrelate($relationship_type, $from, $to);
 
+    /**
+     * Returns an array of the field types supported by this store.
+     */
+    abstract public function field_types();
 }

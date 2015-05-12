@@ -9,12 +9,20 @@ namespace Mu;
 class Mu
 {
 
+    // The api version
+    private $version = '0.9.0';
+
     // The \Mu\Store instance used to access the repository.
     protected $store;
 
     public function __construct(\Mu\Store $store)
     {
         $this->store = $store;
+    }
+
+    public function version()
+    {
+        return $this->version;
     }
 
     // Report the class of the store instance for this Mu instance.
