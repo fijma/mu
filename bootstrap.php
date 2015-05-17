@@ -13,3 +13,4 @@ require_once 'src/mu/fieldtypes/Integer.php';
 require_once 'src/mu/fieldtypes/String.php';
 
 require_once 'test/mu/TestingStore.php';
+require_once 'test/mu/TestingMu.php';

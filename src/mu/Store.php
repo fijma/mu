@@ -12,6 +12,9 @@ namespace Mu;
  *      'deleted' => boolean,            // flags whether record is deleted (no hard deletes)
  *         'data' => ['key' => value...] // array of key/value pairs of record properties
  *     ]
+ *
+ * Note that implementing classes are permitted to add additional key/value pairs for their
+ * own purposes, but this minimal definition will be validated by the Mu api.
  * 
  * Field type arrays are of the following form:
  *     ['fieldtype_name' => 'implementing_class', ...]
@@ -85,9 +88,4 @@ abstract class Store
      */
     abstract public function register_recordtype($recordtype, Array $fieldtypes);
 
-    /**
-     * Returns the recordtype definition.
-     * This function must throw an exception if the recordtype is not registered.
-     */
-    abstract public function define($recordtype);
 }

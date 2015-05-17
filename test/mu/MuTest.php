@@ -12,7 +12,7 @@ class MuTest extends MuPHPUnitExtensions
     protected function setUp()
     {
         $this->store = new TestingStore();
-        $this->mu = new Mu($this->store);
+        $this->mu = new TestingMu($this->store);
     }
 
     public function test_mu_reports_the_store_its_using()
@@ -23,13 +23,14 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_accepts_store_at_instanstiation()
     {
         $store = new TestingStore();
-        $mu = new Mu($store);
+        $mu = new TestingMu($store);
         $this->assertEquals('TestingStore', $this->mu->store());
     }
 
 
     public function test_mu_creates_a_new_record()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $record = $this->mu->create('record', $data);
         $this->assertInternalType('array', $record);
@@ -54,12 +55,14 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_create_fails()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $data = ['exception' => 'Failed to create new record.'];
         $this->mu->create('record', $data);
     }
 
     public function test_mu_gets_a_record()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $this->mu->create('record', $data);
         $record = $this->mu->get(1);
@@ -86,6 +89,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_deletes_a_record()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $record = $this->mu->create('record', $data);
         $version_before = $record['version'];
@@ -110,6 +114,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_updates_a_record()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber!"];
         $record = $this->mu->create('record', $data);
         $record_id = $record['id'];
@@ -130,6 +135,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_checks_versions()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->get(1);
         $record_one['data']['message'] = "How're they hangin'?";
@@ -139,6 +145,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_relates_records()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
         $this->mu->relate('link', $record_one['id'], $record_two['id']);
@@ -160,12 +167,14 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_relate_throws_an_exception_if_the_to_record_does_not_exist()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $this->mu->create('record', ['message' => "G'day cobber!"]);
         $this->mu->relate('link', 1, 2);
     }
 
     public function test_mu_removes_relationships()
     {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
         $this->mu->relate('link', $record_one['id'], $record_two['id']);

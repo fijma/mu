@@ -153,13 +153,5 @@ class TestingStore extends Store
 
     }
 
-    public function define($recordtype)
-    {
-        if(!array_key_exists($recordtype, $this->recordtypes())) {
-            throw new \Exception('Recordtype ' . $recordtype . ' has not been registered.');
-        }
-        return $this->recordtypes()[$recordtype];
-    }
-
 
 }

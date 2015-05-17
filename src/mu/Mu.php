@@ -33,15 +33,11 @@ class Mu
         return $this->version;
     }
 
-    // Report the class of the store instance for this Mu instance.
-    public function store()
-    {
-        return get_class($this->store);
-    }
-
-    // Creates a new record. See \Mu\Store for documentation.
+    // Creates a new record (after validating the data). See \Mu\Store for documentation.
     public function create($type, Array $data)
     {
+        $errors = $this->validate($type, $data);
+        if($errors) throw new \Exception($errors);
         return $this->store->create($type, $data);
     }
 
@@ -57,9 +53,15 @@ class Mu
         return $this->store->delete($record);
     }
 
-    // Updates the given record. See \Mu\Store for documentation.
+    // Updates the given record (after validating the data). See \Mu\Store for documentation.
     public function update(Array $record)
     {
+        $errors = $this->validate_record($record);
+        if($errors) throw new \Exception($errors);
+
+        $errors = $this->validate($record['type'], $record['data']);
+        if($errors) throw new \Exception($errors);
+
         return $this->store->update($record);
     }
 
@@ -114,6 +116,86 @@ class Mu
     {
         $this->store->register_recordtype($recordtype, $fieldtypes);
         $this->recordtypes[$recordtype] = $fieldtypes;
+    }
+
+    // Validates a record (ie as defined in \Mu\Store, and *not* the data itself).
+    // Returns a message detailing the errors (empty string on success).
+    public function validate_record($record)
+    {
+        $keys = ['id', 'type', 'version', 'deleted', 'data'];
+
+        $diff = array_diff($keys, array_keys($record));
+        if(!empty($diff)) {
+            $s = 'Invalid record - missing the following field';
+            $s .= count($diff) > 1 ? 's: ' : ': ';
+            $s .= implode(', ', $diff);
+            $s .= '.';
+            return $s;
+        }
+
+        $invalid_fields = [];
+        if(!is_integer($record['id'])) {
+            $invalid_fields[] = 'id is not an integer';
+        }
+        if (!is_string($record['type'])) {
+            $invalid_fields[] = 'type is not a string';
+        }
+        if (!is_string($record['version'])) {
+            $invalid_fields[] = 'version is not a string';
+        }
+        if(!is_bool($record['deleted'])) {
+            $invalid_fields[] = 'deleted is not a boolean';
+        }
+        if(!is_array($record['data'])) {
+            $invalid_fields[] = 'data is not an array';
+        }
+
+        if(!empty($invalid_fields)) {
+            $s = 'Invalid record - invalid data for the following field';
+            $s .=count($invalid_fields) > 1 ? 's: ' : ': ';
+            $s .= implode(', ', $invalid_fields);
+            $s .= '.';
+            return $s;
+        }
+
+        return '';
+    }
+
+    // Validates a data array against the recordtype.
+    // Returns a message detailing the errors (empty string on success).
+    protected function validate($recordtype, Array $data)
+    {
+        $definition = $this->recordtypes[$recordtype];
+        
+        $diff = array_diff_key($data, $definition);
+        if(!empty($diff)) {
+            $s = 'Missing the following field';
+            $s .= count($diff) > 1 ? 's: ' : ': ';
+            $s .= implode(', ', $diff);
+            $s .= '.';
+            return $s;
+        }
+
+        $invalid_fields = array();
+        foreach($definition as $field => $fieldtype) {
+            if(!$this->fieldtypes[$fieldtype]->validate($data[$field])) {
+                $invalid_fields[] = $field;
+            }
+        }
+        if(!empty($invalid_fields)) {
+            $s = 'Received invalid data for the following field';
+            $s .= count($invalid_fields) > 1 ? 's: ' : ': ';
+            $m = '';
+            foreach($invalid_fields as $field) {
+                $m .= mb_strlen($m) > 0 ? ', ' : '';
+                $m .= $field . '(' . $data[$field] . ')';
+            }
+            $s .= $m . '.';
+            return $s;
+        }
+
+        return '';
+
     }
 
 }
