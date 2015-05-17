@@ -54,14 +54,40 @@ abstract class Store
 
     /**
      * Removes the given relationship.
-     * This function must not throw an Exception if the defined relationship does not exist.
-     * This function must throw an Exception if the defined relationship does exist
+     * This function must not throw an exception if the defined relationship does not exist.
+     * This function must throw an exception if the defined relationship does exist
      * but is not able to be deleted.
      */
     abstract public function unrelate($relationship_type, $from, $to);
 
     /**
-     * Returns an array of the field types supported by this store.
+     * Returns an array of the field types registered in this store.
      */
-    abstract public function field_types();
+    abstract public function fieldtypes();
+
+    /**
+     * Adds a fieldtype definition to the store's registry.
+     * This function must throw an exception if the registration fails.
+     * This function must throw an exception if the fieldtype already exists.
+     */
+    abstract public function register_fieldtype($fieldtype, $implementing_class);
+    
+    /**
+     * Returns an array of the record types registered in this store.
+     */
+    abstract public function recordtypes();
+
+    /**
+     * Adds a recordtype definition to the store's registry.
+     * This function must throw an exception if the registration fails.
+     * This function must throw an exception if the recordtype already exists.
+     * This function must throw an exception if any of the fieldtypes are not registered.
+     */
+    abstract public function register_recordtype($recordtype, Array $fieldtypes);
+
+    /**
+     * Returns the recordtype definition.
+     * This function must throw an exception if the recordtype is not registered.
+     */
+    abstract public function define($recordtype);
 }

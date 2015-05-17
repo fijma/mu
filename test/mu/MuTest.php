@@ -11,20 +11,20 @@ class MuTest extends MuPHPUnitExtensions
 
     protected function setUp()
     {
-        $this->store = new TestStore();
+        $this->store = new TestingStore();
         $this->mu = new Mu($this->store);
     }
 
     public function test_mu_reports_the_store_its_using()
     {
-        $this->assertEquals('TestStore', $this->mu->store());
+        $this->assertEquals('TestingStore', $this->mu->store());
     }
 
     public function test_mu_accepts_store_at_instanstiation()
     {
-        $store = new TestStore();
+        $store = new TestingStore();
         $mu = new Mu($store);
-        $this->assertEquals('TestStore', $this->mu->store());
+        $this->assertEquals('TestingStore', $this->mu->store());
     }
 
 
@@ -191,6 +191,76 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_reports_its_version()
     {
         $this->assertEquals('0.9.0', $this->mu->version());
+    }
+
+    public function test_mu_reports_the_fieldtypes_it_supports()
+    {
+        $expected = ['boolean', 'float', 'integer', 'string'];
+        $this->assertEquals($expected, $this->mu->fieldtypes());
+    }
+
+    public function test_mu_can_register_fieldtypes()
+    {
+        $expected = ['boolean', 'datetime', 'float', 'integer', 'string'];
+        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $actual = $this->mu->fieldtypes();
+        $this->assertEquals(sort($expected), sort($actual));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Failed to register fieldtype bugger.
+     */
+    public function test_mu_gets_an_exception_when_registering_a_fieldtype_fails()
+    {
+        $this->mu->register_fieldtype('bugger', 'doesnotmatter');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionmessage Fieldtype boolean is already registered.
+     */
+    public function test_mu_throws_an_exception_when_registering_an_existing_fieldtype()
+    {
+        $this->mu->register_fieldtype('boolean', '\Not\Mu\Boolean');
+    }
+
+    public function test_mu_reports_the_recordtypes_it_supports()
+    {
+        $this->assertEquals(['article'], $this->mu->recordtypes());
+    }
+
+    public function test_mu_can_register_recordtypes()
+    {
+        $this->mu->register_recordtype('author', ['name' => 'string', 'email' => 'string']);
+        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Failed to register recordtype bugger.
+     */
+    public function test_mu_gets_an_exception_when_registering_a_recordtype_fails()
+    {
+        $this->mu->register_recordtype('bugger', []);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Recordtype article is already registered.
+     */
+    public function test_mu_throws_an_exception_when_registering_an_existing_recordtype()
+    {
+        $this->mu->register_recordtype('article', []);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage The following fieldtype is not registered: text.
+     */
+    public function test_mu_throws_an_exception_when_registering_a_recordtype_which_has_an_unregistered_fieldtype()
+    {
+        $this->mu->register_recordtype('text', ['content' => 'text']);
     }
 
 }

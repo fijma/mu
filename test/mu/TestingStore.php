@@ -1,11 +1,16 @@
 <?php
 
 use \Mu\Store;
+use \Mu\Boolean;
+use \Mu\DateTime;
+use \Mu\Float;
+use \Mu\Integer;
+use \Mu\String;
 
 /**
  * A datastore for testing the Mu api.
  */
-class TestStore extends Store
+class TestingStore extends Store
 {
 
     // Store the data
@@ -97,5 +102,64 @@ class TestStore extends Store
             }
         }
     }
+
+    public function fieldtypes()
+    {
+        return ['boolean' => '\Mu\Boolean',
+                'float' => '\Mu\Float',
+                'integer' => '\Mu\Integer',
+                'string' => '\Mu\String'];
+    }
+
+    public function register_fieldtype($fieldtype, $implementing_class)
+    {
+        if(array_key_exists($fieldtype, $this->fieldtypes())) {
+            throw new \Exception('Fieldtype ' . $fieldtype . ' is already registered.');
+        }
+
+        if($fieldtype === 'bugger') {
+            throw new \Exception('Failed to register fieldtype ' . $fieldtype . '.');
+        }
+    }
+
+    public function recordtypes()
+    {
+        return ['article' => ['title' => 'string',
+                              'publishdate' => 'datetime',
+                              'summary' => 'string',
+                              'article' => 'string']];
+    }
+
+    public function register_recordtype($recordtype, Array $fieldtypes)
+    {
+        if($recordtype === 'bugger') {
+            throw new \Exception('Failed to register recordtype ' . $recordtype . '.');
+        }
+
+        if(array_key_exists($recordtype, $this->recordtypes())){
+            throw new \Exception('Recordtype ' . $recordtype . ' is already registered.');
+        }
+
+        $missing_keys = array_diff($fieldtypes, array_keys($this->fieldtypes()));
+
+        if(!empty($missing_keys)) {
+            $s = 'The following fieldtype';
+            $s .= count($missing_keys) > 1 ? 's are' : ' is';
+            $s .= ' not registered: ';
+            $s .= implode(', ', $missing_keys);
+            $s .= '.';
+            throw new \Exception($s);
+        }
+
+    }
+
+    public function define($recordtype)
+    {
+        if(!array_key_exists($recordtype, $this->recordtypes())) {
+            throw new \Exception('Recordtype ' . $recordtype . ' has not been registered.');
+        }
+        return $this->recordtypes()[$recordtype];
+    }
+
 
 }
