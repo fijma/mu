@@ -5,6 +5,11 @@ namespace Mu;
 class Integer implements \Mu\Fieldtype
 {
 
+    public function create($label)
+    {
+        return null;
+    }
+
     public function prepare($value)
     {
         return $value;

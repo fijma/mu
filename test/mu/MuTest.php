@@ -56,7 +56,7 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_throws_an_exception_when_create_fails()
     {
         $this->mu->register_recordtype('record', ['message' => 'string']);
-        $data = ['exception' => 'Failed to create new record.'];
+        $data = ['message' => 'string', 'exception' => 'Failed to create new record.'];
         $this->mu->create('record', $data);
     }
 
@@ -270,6 +270,65 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_throws_an_exception_when_registering_a_recordtype_which_has_an_unregistered_fieldtype()
     {
         $this->mu->register_recordtype('text', ['content' => 'text']);
+    }
+
+    public function test_mu_returns_an_error_string_when_missing_one_record_field()
+    {
+        $expected = 'Invalid record - missing the following field: id.';
+        $actual = $this->mu->test_record_validation(['type' => 'String', 'version' => '1', 'deleted' => false, 'data' => []]);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_when_missing_multiple_record_fields()
+    {
+        $expected = 'Invalid record - missing the following fields: id, type.';
+        $actual = $this->mu->test_record_validation(['version' => '1', 'deleted' => false, 'data' => []]);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_one_invalid_record_field()
+    {
+        $expected = 'Invalid record - invalid data for the following field: id is not an integer.';
+        $actual = $this->mu->test_record_validation(['id' => '1', 'type' => 'String', 'version' => '1', 'deleted' => false, 'data' => []]);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_multiple_invalid_record_fields()
+    {
+        $expected = 'Invalid record - invalid data for the following fields: id is not an integer, type is not a string, version is not a string, deleted is not a boolean, data is not an array.';
+        $actual = $this->mu->test_record_validation(['id' => '1', 'type' => 1, 'version' => 1, 'deleted' => 'String', 'data' => null]);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_one_missing_data_field()
+    {
+        $datetimezone = new \DateTimezone('Australia/Adelaide');
+        $expected = 'Missing the following field: title.';
+        $actual = $this->mu->test_validation('article', ['publishdate' => new \DateTime(null, $datetimezone), 'summary' => 'summary', 'article' => 'article']);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_multiple_missing_data_fields()
+    {
+        $expected = 'Missing the following fields: title, publishdate, summary, article.';
+        $actual = $this->mu->test_validation('article', []);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_one_invalid_data_field()
+    {
+        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $expected = 'Received invalid data for the following field: publishdate(que).';
+        $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
+    {
+        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
+        $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
+        $this->assertEquals($expected, $actual);
     }
 
 }

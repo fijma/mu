@@ -13,5 +13,6 @@ class IntegerTest extends MuPHPUnitExtensions
         $this->assertTrue($integer->validate($expected));
         $this->assertFalse($integer->validate('five'));
         $this->assertEquals($expected, $integer->convert($expected));
+        $this->assertNull($integer->create('integer'));
     }
 }

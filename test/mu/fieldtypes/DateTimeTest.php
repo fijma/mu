@@ -14,5 +14,6 @@ class DateTimeTest extends MuPHPUnitExtensions
         $this->assertTrue($datetime->validate($expected));
         $this->assertFalse($datetime->validate(5));
         $this->assertEquals($expected, $datetime->convert($expected));
+        $this->assertNull($datetime->create('datetime'));
     }
 }

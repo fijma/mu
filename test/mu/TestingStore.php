@@ -22,12 +22,6 @@ class TestingStore extends Store
     // Keep track of some ids
     private $id = 0;
 
-    // Testing functions
-    public function show_store()
-    {
-        return $this->store;
-    }
-
     public function show_relationships()
     {
         return $this->relationships;

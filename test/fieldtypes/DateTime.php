@@ -2,8 +2,14 @@
 
 namespace Mu;
 
-class String implements \Mu\Fieldtype
+class DateTime implements \Mu\Fieldtype
 {
+
+    public function create($label)
+    {
+        return null;
+    }
+
     public function prepare($value)
     {
         return $value;
@@ -11,11 +17,12 @@ class String implements \Mu\Fieldtype
 
     public function validate($value)
     {
-        return is_string($value);
+        return $value instanceof \DateTime;
     }
 
     public function convert($value)
     {
         return $value;
     }
+
 }

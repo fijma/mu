@@ -1,33 +1,27 @@
 <?php
 
-
 namespace Mu;
 
-
-class DateTime implements \Mu\Fieldtype
+class String implements \Mu\Fieldtype
 {
-
-    public function prepare($value)
+    
+    public function create($label)
     {
-
-        return $value;
-
+        return null;
     }
 
+public function prepare($value)
+    {
+        return $value;
+    }
 
     public function validate($value)
     {
-
-        return $value instanceof \DateTime;
-
+        return is_string($value);
     }
-
 
     public function convert($value)
     {
-
         return $value;
-
     }
-
 }

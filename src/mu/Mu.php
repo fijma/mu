@@ -2,7 +2,6 @@
 
 namespace Mu;
 
-
 /**
  * Defines the api, performs version checks and data validation.
  */
@@ -120,7 +119,7 @@ class Mu
 
     // Validates a record (ie as defined in \Mu\Store, and *not* the data itself).
     // Returns a message detailing the errors (empty string on success).
-    public function validate_record($record)
+    protected function validate_record($record)
     {
         $keys = ['id', 'type', 'version', 'deleted', 'data'];
 
@@ -167,11 +166,11 @@ class Mu
     {
         $definition = $this->recordtypes[$recordtype];
         
-        $diff = array_diff_key($data, $definition);
+        $diff = array_diff_key($definition, $data);
         if(!empty($diff)) {
             $s = 'Missing the following field';
             $s .= count($diff) > 1 ? 's: ' : ': ';
-            $s .= implode(', ', $diff);
+            $s .= implode(', ', array_keys($diff));
             $s .= '.';
             return $s;
         }

@@ -2,13 +2,19 @@
 
 namespace Mu;
 
+/**
+ * Field types handle the conversion of php data to/from the underlying
+ * repository. As such, they are intended to be coupled to a particular
+ * Store instance.
+ */
+
 interface FieldType
 {
 
     /**
-     * TODO: returns the necessary database settings for creating an item of this type in the underlying repository.
+     * Returns a string for creating an item of this type in the underlying repository.
      */
-    //public function create($label);
+    public function create($label);
 
 
     /**
