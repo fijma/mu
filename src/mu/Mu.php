@@ -3,7 +3,7 @@
 namespace Mu;
 
 /**
- * Defines the api, performs version checks and data validation.
+ * Defines the api, performs data validation.
  */
 class Mu
 {
