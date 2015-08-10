@@ -130,21 +130,6 @@ class TestingStore extends Store
             throw new \Exception('Failed to register recordtype ' . $recordtype . '.');
         }
 
-        if(array_key_exists($recordtype, $this->recordtypes())){
-            throw new \Exception('Recordtype ' . $recordtype . ' is already registered.');
-        }
-
-        $missing_keys = array_diff($fieldtypes, array_keys($this->fieldtypes()));
-
-        if(!empty($missing_keys)) {
-            $s = 'The following fieldtype';
-            $s .= count($missing_keys) > 1 ? 's are' : ' is';
-            $s .= ' not registered: ';
-            $s .= implode(', ', $missing_keys);
-            $s .= '.';
-            throw new \Exception($s);
-        }
-
     }
 
 

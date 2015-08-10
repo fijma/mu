@@ -94,6 +94,14 @@ class Mu
     // Registers a new fieldtype.
     public function register_fieldtype($fieldtype, $implementing_class)
     {
+        if (!is_string($fieldtype)) {
+            throw new \Exception('Fieldtype name must be a string.');
+        }
+
+        if (!class_exists($implementing_class)) {
+            throw new \Exception('Fieldtype implementing class \'' . $implementing_class . '\' does not exist.');
+        }
+
         $this->store->register_fieldtype($fieldtype, $implementing_class);
         $this->fieldtypes[$fieldtype] = new $implementing_class();
     }
@@ -113,6 +121,34 @@ class Mu
     // Registers a new recordtype.
     public function register_recordtype($recordtype, Array $fieldtypes)
     {
+        if(!is_string($recordtype)) {
+            throw new \Exception('Recordtype name must be a string.');
+        }
+
+        if(array_key_exists($recordtype, $this->recordtypes)) {
+            throw new \Exception('Recordtype ' . $recordtype . ' is already registered.');
+        }
+
+        if(empty($fieldtypes)) {
+            throw new \Exception('Fieldtype array cannot be empty.');
+        }
+
+        $diff = array_diff($fieldtypes, array_keys($this->fieldtypes));
+        if(!empty($diff)) {
+            $s = 'The following fieldtype';
+            $s .= count($diff) > 1 ? 's are ' : ' is ';
+            $s .= 'not registered: ';
+            $s .= implode(', ', $diff);
+            $s .= '.';
+            throw new \Exception($s);
+        }
+
+        foreach(array_keys($fieldtypes) as $fieldname) {
+            if (!is_string($fieldname)) {
+                throw new \Exception('Field names must be strings.');
+            }
+        }
+
         $this->store->register_recordtype($recordtype, $fieldtypes);
         $this->recordtypes[$recordtype] = $fieldtypes;
     }

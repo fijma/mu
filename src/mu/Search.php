@@ -6,7 +6,7 @@ namespace Mu;
  * The Search interface allows you to implement your own search algorithms for the standard search api.
  * Alternately, you could extend the base Search class to add your own custom search functions.
  * Search objects are registered in the Store similarly to field types.
- * All functions return an array of records (or an empty array if no records found0.
+ * All functions return an array of records (or an empty array if no records found).
  * All functions must validate parameters, throwing exceptions on validation failure.
  * All parameters are supplied as keyed arrays.
  */

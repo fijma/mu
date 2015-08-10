@@ -71,7 +71,6 @@ abstract class Store
     /**
      * Adds a fieldtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
-     * This function must throw an exception if the fieldtype already exists.
      */
     abstract public function register_fieldtype($fieldtype, $implementing_class);
     
@@ -83,8 +82,6 @@ abstract class Store
     /**
      * Adds a recordtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
-     * This function must throw an exception if the recordtype already exists.
-     * This function must throw an exception if any of the fieldtypes are not registered.
      */
     abstract public function register_recordtype($recordtype, Array $fieldtypes);
 

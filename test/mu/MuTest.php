@@ -222,16 +222,34 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_gets_an_exception_when_registering_a_fieldtype_fails()
     {
-        $this->mu->register_fieldtype('bugger', 'doesnotmatter');
+        $this->mu->register_fieldtype('bugger', '\Mu\Boolean');
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionmessage Fieldtype boolean is already registered.
+     * @expectedExceptionMessage Fieldtype boolean is already registered.
      */
     public function test_mu_throws_an_exception_when_registering_an_existing_fieldtype()
     {
-        $this->mu->register_fieldtype('boolean', '\Not\Mu\Boolean');
+        $this->mu->register_fieldtype('boolean', '\Mu\Boolean');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Fieldtype name must be a string.
+     */
+    public function test_mu_throws_an_exception_if_fieldtype_name_is_not_a_string()
+    {
+        $this->mu->register_fieldtype(1, '\Mu\Boolean');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Fieldtype implementing class 'hello' does not exist.
+     */
+    public function test_mu_throws_an_exception_if_implementing_class_does_not_exist()
+    {
+        $this->mu->register_fieldtype('hello', 'hello');
     }
 
     public function test_mu_reports_the_recordtypes_it_supports()
@@ -251,7 +269,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_gets_an_exception_when_registering_a_recordtype_fails()
     {
-        $this->mu->register_recordtype('bugger', []);
+        $this->mu->register_recordtype('bugger', ['name' => 'string']);
     }
 
     /**
@@ -260,7 +278,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_registering_an_existing_recordtype()
     {
-        $this->mu->register_recordtype('article', []);
+        $this->mu->register_recordtype('article', ['name' => 'string']);
     }
 
     /**
@@ -270,6 +288,51 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_throws_an_exception_when_registering_a_recordtype_which_has_an_unregistered_fieldtype()
     {
         $this->mu->register_recordtype('text', ['content' => 'text']);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Recordtype name must be a string.
+     */
+    public function test_mu_throws_an_exception_if_recordtype_name_is_not_a_string()
+    {
+        $this->mu->register_recordtype(1, ['name' => 'string']);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Fieldtype array cannot be empty.
+     */
+    public function test_mu_throw_an_exception_if_fieldtype_is_an_empty_array()
+    {
+        $this->mu->register_recordtype('test', []);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage The following fieldtype is not registered: blah.
+    */
+    public function test_mu_throws_an_exception_when_a_fieldtype_is_not_registered()
+    {
+        $this->mu->register_recordtype('test', ['blah' => 'blah']);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Field names must be strings.
+    */
+    public function test_mu_throws_an_exception_if_field_names_are_not_strings()
+    {
+        $this->mu->register_recordtype('test', [1 => 'string']);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage The following fieldtypes are not registered: bleep, bloop.
+    */
+    public function test_mu_throws_an_exception_when_multiple_fieldtypes_are_not_registered()
+    {
+        $this->mu->register_recordtype('test', ['blip' => 'bleep', 'blup' => 'bloop']);
     }
 
     public function test_mu_returns_an_error_string_when_missing_one_record_field()
