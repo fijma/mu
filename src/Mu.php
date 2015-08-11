@@ -20,11 +20,15 @@ class Mu
     // The recordtypes supported by the repository.
     protected $recordtypes = array();
 
+    // The search providers supported by the repository.
+    protected $searchers = array();
+
     public function __construct(\Mu\Store $store)
     {
         $this->store = $store;
         $this->load_fieldtypes();
         $this->load_recordtypes();
+        $this->load_searchers();
     }
 
     public function version()
@@ -98,8 +102,16 @@ class Mu
             throw new \Exception('Fieldtype name must be a string.');
         }
 
+        if(in_array($fieldtype, $this->fieldtypes())) {
+            throw new \Exception('Fieldtype ' . $fieldtype . ' is already registered.');
+        }
+
         if (!class_exists($implementing_class)) {
             throw new \Exception('Fieldtype implementing class \'' . $implementing_class . '\' does not exist.');
+        }
+
+        if(!in_array('Mu\FieldType', class_implements($implementing_class))) {
+            throw new \Exception('Fieldtype implementing class must implement the \\Mu\\FieldType interface.');
         }
 
         $this->store->register_fieldtype($fieldtype, $implementing_class);
@@ -231,6 +243,54 @@ class Mu
 
         return '';
 
+    }
+
+    // Instantiates the search provider objects into the fieldtypes array.
+    protected function load_searchers()
+    {
+        $searchers = $this->store->searchers();
+        foreach ($searchers as $searcher => $implementing_class) {
+            $this->searchers[$searcher] = new $implementing_class();
+        }
+    }
+
+    // Reports the registered search providers.
+    public function searchers()
+    {
+        return array_keys($this->searchers);
+    }
+
+    // Registers a new search provider.
+    public function register_searcher($searcher, $implementing_class)
+    {
+        if (in_array($searcher, $this->searchers())) {
+            throw new \Exception('Search provider ' . $searcher . ' is already registered.');
+        }
+
+        if (!is_string($searcher)) {
+            throw new \Exception('Search provider name must be a string.');
+        }
+
+        if (!class_exists($implementing_class)) {
+            throw new \Exception('Search provider implementing class \'' . $implementing_class . '\' does not exist.');
+        }
+
+        if(!in_array('Mu\Searcher', class_implements($implementing_class))) {
+            throw new \Exception('Search provider implementing class must implement the \\Mu\\Searcher interface.');
+        }
+
+        $this->store->register_searcher($searcher, $implementing_class);
+        $this->searchers[$searcher] = new $implementing_class();
+    }
+
+    // Returns the requested search provider
+    public function searcher($searcher)
+    {
+        if(!in_array($searcher, $this->searchers())) {
+            throw new \Exception('Search provider ' . $searcher . ' has not been registered.');
+        }
+
+        return $this->searchers[$searcher];
     }
 
 }

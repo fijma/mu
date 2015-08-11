@@ -2,12 +2,14 @@
 
 require_once 'test/MuPHPUnitExtensions.php';
 
-require_once 'src/mu/Mu.php';
-require_once 'src/mu/Store.php';
-require_once 'src/mu/FieldType.php';
+require_once 'src/Mu.php';
+require_once 'src/Store.php';
+require_once 'src/FieldType.php';
+require_once 'src/Searcher.php';
 
-require_once 'test/mu/TestingStore.php';
-require_once 'test/mu/TestingMu.php';
+require_once 'test/mu/MockStore.php';
+require_once 'test/mu/MockMu.php';
+require_once 'test/mu/MockSearcher.php';
 require_once 'test/fieldtypes/Boolean.php';
 require_once 'test/fieldtypes/DateTime.php';
 require_once 'test/fieldtypes/Float.php';

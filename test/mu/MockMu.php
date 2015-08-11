@@ -2,7 +2,7 @@
 
 use \Mu\Mu;
 
-class TestingMu extends Mu
+class MockMu extends Mu
 {
     public function store()
     {

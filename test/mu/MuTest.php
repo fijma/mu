@@ -2,6 +2,12 @@
 
 use \Mu\Mu;
 use \Mu\Store;
+use \Mu\Boolean;
+use \Mu\DateTime;
+use \Mu\Float;
+use \Mu\Integer;
+use \Mu\String;
+
 
 class MuTest extends MuPHPUnitExtensions
 {
@@ -11,20 +17,20 @@ class MuTest extends MuPHPUnitExtensions
 
     protected function setUp()
     {
-        $this->store = new TestingStore();
-        $this->mu = new TestingMu($this->store);
+        $this->store = new MockStore();
+        $this->mu = new MockMu($this->store);
     }
 
     public function test_mu_reports_the_store_its_using()
     {
-        $this->assertEquals('TestingStore', $this->mu->store());
+        $this->assertEquals('MockStore', $this->mu->store());
     }
 
     public function test_mu_accepts_store_at_instanstiation()
     {
-        $store = new TestingStore();
-        $mu = new TestingMu($store);
-        $this->assertEquals('TestingStore', $this->mu->store());
+        $store = new MockStore();
+        $mu = new MockMu($store);
+        $this->assertEquals('MockStore', $this->mu->store());
     }
 
 
@@ -247,9 +253,34 @@ class MuTest extends MuPHPUnitExtensions
      * @expectedException Exception
      * @expectedExceptionMessage Fieldtype implementing class 'hello' does not exist.
      */
-    public function test_mu_throws_an_exception_if_implementing_class_does_not_exist()
+    public function test_mu_throws_an_exception_if_implementing_fieldtype_class_does_not_exist()
     {
         $this->mu->register_fieldtype('hello', 'hello');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Fieldtype implementing class must implement the \Mu\FieldType interface.
+     */
+    public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_fieldtype_interface()
+    {
+        $this->mu->register_fieldtype('hello', 'MockStore');
+    }
+
+    public function test_mu_returns_an_error_string_for_one_invalid_data_field()
+    {
+        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $expected = 'Received invalid data for the following field: publishdate(que).';
+        $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
+    {
+        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
+        $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
+        $this->assertEquals($expected, $actual);
     }
 
     public function test_mu_reports_the_recordtypes_it_supports()
@@ -378,20 +409,79 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_mu_returns_an_error_string_for_one_invalid_data_field()
+    public function test_mu_reports_the_searchers_it_supports()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
-        $expected = 'Received invalid data for the following field: publishdate(que).';
-        $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
-        $this->assertEquals($expected, $actual);
+        $expected = ['default'];
+        $this->assertEquals($expected, $this->mu->searchers());
     }
 
-    public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
+    public function test_mu_can_register_searchers()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
-        $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
-        $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
-        $this->assertEquals($expected, $actual);
+        $expected = ['default', 'tester'];
+        $this->mu->register_searcher('tester', '\Mu\MockSearcher');
+        $actual = $this->mu->searchers();
+        $this->assertEquals(sort($expected), sort($actual));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Failed to register search provider bugger.
+     */
+    public function test_mu_gets_an_exception_when_registering_a_searcher_fails()
+    {
+        $this->mu->register_searcher('bugger', '\Mu\MockSearcher');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Search provider default is already registered.
+     */
+    public function test_mu_throws_an_exception_when_registering_an_existing_searcher()
+    {
+        $this->mu->register_searcher('default', '\Mu\MockSearcher');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Search provider name must be a string.
+     */
+    public function test_mu_throws_an_exception_if_searcher_name_is_not_a_string()
+    {
+        $this->mu->register_searcher(1, '\Mu\MockSearcher');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Search provider implementing class 'hello' does not exist.
+     */
+    public function test_mu_throws_an_exception_if_implementing_searcher_class_does_not_exist()
+    {
+        $this->mu->register_searcher('hello', 'hello');
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Search provider implementing class must implement the \Mu\Searcher interface.
+     */
+    public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_searcher_interface()
+    {
+        $this->mu->register_searcher('hello', 'MockStore');
+    }
+
+    public function test_mu_returns_searcher()
+    {
+        $searcher = $this->mu->searcher('default');
+        $this->assertNull($searcher->find(1));
+        $this->assertNull($searcher->related(1));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionmessage Search provider bugger has not been registered.
+     */
+    public function test_mu_throws_an_exception_if_searcher_not_registered()
+    {
+        $searcher = $this->mu->searcher('bugger');
     }
 
 }

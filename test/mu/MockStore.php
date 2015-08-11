@@ -1,16 +1,10 @@
 <?php
 
 use \Mu\Store;
-use \Mu\Boolean;
-use \Mu\DateTime;
-use \Mu\Float;
-use \Mu\Integer;
-use \Mu\String;
-
 /**
  * A datastore for testing the Mu api.
  */
-class TestingStore extends Store
+class MockStore extends Store
 {
 
     // Store the data
@@ -107,10 +101,6 @@ class TestingStore extends Store
 
     public function register_fieldtype($fieldtype, $implementing_class)
     {
-        if(array_key_exists($fieldtype, $this->fieldtypes())) {
-            throw new \Exception('Fieldtype ' . $fieldtype . ' is already registered.');
-        }
-
         if($fieldtype === 'bugger') {
             throw new \Exception('Failed to register fieldtype ' . $fieldtype . '.');
         }
@@ -130,6 +120,18 @@ class TestingStore extends Store
             throw new \Exception('Failed to register recordtype ' . $recordtype . '.');
         }
 
+    }
+
+    public function searchers()
+    {
+            return ['default' => '\Mu\MockSearcher'];
+    }
+
+    public function register_searcher($searcher, $implementing_class)
+    {
+        if($searcher === 'bugger') {
+            throw new \Exception('Failed to register search provider ' . $searcher . '.');
+        }
     }
 
 

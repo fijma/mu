@@ -11,7 +11,7 @@ namespace Mu;
  * All parameters are supplied as keyed arrays.
  */
 
-interface Search
+interface Searcher
 {
 
     /**

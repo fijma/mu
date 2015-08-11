@@ -85,4 +85,15 @@ abstract class Store
      */
     abstract public function register_recordtype($recordtype, Array $fieldtypes);
 
+    /**
+     * Returns an array of the search providers registered in this store.
+     */
+    abstract public function searchers();
+
+    /**
+     * Adds a search provider to the store's registry.
+     * This function must throw an exception if the registration fails.
+     */
+    abstract public function register_searcher($name, $implementing_class);
+
 }
