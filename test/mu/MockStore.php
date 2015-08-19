@@ -93,10 +93,10 @@ class MockStore extends Store
 
     public function fieldtypes()
     {
-        return ['boolean' => '\Mu\Boolean',
-                'float' => '\Mu\Float',
-                'integer' => '\Mu\Integer',
-                'string' => '\Mu\String'];
+        return ['boolean' => '\Mu\MockBoolean',
+                'float' => '\Mu\MockFloat',
+                'integer' => '\Mu\MockInteger',
+                'string' => '\Mu\MockString'];
     }
 
     public function register_fieldtype($fieldtype, $implementing_class)

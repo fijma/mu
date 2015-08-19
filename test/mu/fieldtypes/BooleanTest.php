@@ -1,13 +1,11 @@
 <?php
 
-use \Mu\Boolean;
-
 class BooleanTest extends MuPHPUnitExtensions
 {
 
     public function test_boolean()
     {
-        $boolean = new Boolean();
+        $boolean = new \Mu\MockBoolean();
         $expected = true;
         $this->assertEquals($expected, $boolean->prepare($expected));
         $this->assertTrue($boolean->validate($expected));

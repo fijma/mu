@@ -1,7 +1,5 @@
 <?php
 
-use \Mu\DateTime;
-
 class DateTimeTest extends MuPHPUnitExtensions
 {
 
@@ -9,7 +7,7 @@ class DateTimeTest extends MuPHPUnitExtensions
     {
         $datetimezone = new \DateTimezone('Australia/Adelaide');
         $expected = new \DateTime(null, $datetimezone);
-        $datetime = new DateTime();
+        $datetime = new \Mu\MockDateTime();
         $this->assertEquals($expected, $datetime->prepare($expected));
         $this->assertTrue($datetime->validate($expected));
         $this->assertFalse($datetime->validate(5));

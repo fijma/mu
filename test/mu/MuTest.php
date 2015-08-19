@@ -217,7 +217,7 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_can_register_fieldtypes()
     {
         $expected = ['boolean', 'datetime', 'float', 'integer', 'string'];
-        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
         $actual = $this->mu->fieldtypes();
         $this->assertEquals(sort($expected), sort($actual));
     }
@@ -228,7 +228,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_gets_an_exception_when_registering_a_fieldtype_fails()
     {
-        $this->mu->register_fieldtype('bugger', '\Mu\Boolean');
+        $this->mu->register_fieldtype('bugger', '\Mu\MockBoolean');
     }
 
     /**
@@ -237,7 +237,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_registering_an_existing_fieldtype()
     {
-        $this->mu->register_fieldtype('boolean', '\Mu\Boolean');
+        $this->mu->register_fieldtype('boolean', '\Mu\MockBoolean');
     }
 
     /**
@@ -246,7 +246,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_if_fieldtype_name_is_not_a_string()
     {
-        $this->mu->register_fieldtype(1, '\Mu\Boolean');
+        $this->mu->register_fieldtype(1, '\Mu\MockBoolean');
     }
 
     /**
@@ -269,7 +269,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_one_invalid_data_field()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
         $expected = 'Received invalid data for the following field: publishdate(que).';
         $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
         $this->assertEquals($expected, $actual);
@@ -277,7 +277,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\DateTime');
+        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
         $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
         $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
         $this->assertEquals($expected, $actual);

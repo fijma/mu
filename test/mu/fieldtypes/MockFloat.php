@@ -2,7 +2,7 @@
 
 namespace Mu;
 
-class DateTime implements \Mu\Fieldtype
+class MockFloat extends \Mu\Float implements \Mu\Fieldtype
 {
 
     public function create($label)
@@ -15,14 +15,7 @@ class DateTime implements \Mu\Fieldtype
         return $value;
     }
 
-    public function validate($value)
-    {
-        return $value instanceof \DateTime;
-    }
-
-    public function convert($value)
-    {
+    public function convert($value){
         return $value;
     }
-
 }

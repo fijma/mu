@@ -1,13 +1,11 @@
 <?php
 
-use \Mu\String;
-
 class StringTest extends MuPHPUnitExtensions
 {
 
     public function test_string()
     {
-        $string = new String();
+        $string = new \Mu\MockString();
         $expected = 'string';
         $this->assertEquals($expected, $string->prepare($expected));
         $this->assertTrue($string->validate($expected));

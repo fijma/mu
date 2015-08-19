@@ -2,7 +2,7 @@
 
 namespace Mu;
 
-class Float implements \Mu\Fieldtype
+class MockInteger extends \Mu\Integer implements \Mu\Fieldtype
 {
 
     public function create($label)
@@ -15,12 +15,8 @@ class Float implements \Mu\Fieldtype
         return $value;
     }
 
-    public function validate($value)
+    public function convert($value)
     {
-        return is_float($value);
-    }
-
-    public function convert($value){
         return $value;
     }
 }

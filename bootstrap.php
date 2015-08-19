@@ -6,13 +6,17 @@ require_once 'src/Mu.php';
 require_once 'src/Store.php';
 require_once 'src/FieldType.php';
 require_once 'src/Searcher.php';
+require_once 'src/fieldtypes/Boolean.php';
+require_once 'src/fieldtypes/DateTime.php';
+require_once 'src/fieldtypes/Float.php';
+require_once 'src/fieldtypes/Integer.php';
+require_once 'src/fieldtypes/String.php';
 
 require_once 'test/mu/MockStore.php';
 require_once 'test/mu/MockMu.php';
 require_once 'test/mu/MockSearcher.php';
-require_once 'test/fieldtypes/Boolean.php';
-require_once 'test/fieldtypes/DateTime.php';
-require_once 'test/fieldtypes/Float.php';
-require_once 'test/fieldtypes/Integer.php';
-require_once 'test/fieldtypes/String.php';
-
+require_once 'test/mu/fieldtypes/MockBoolean.php';
+require_once 'test/mu/fieldtypes/MockDateTime.php';
+require_once 'test/mu/fieldtypes/MockFloat.php';
+require_once 'test/mu/fieldtypes/MockInteger.php';
+require_once 'test/mu/fieldtypes/MockString.php';

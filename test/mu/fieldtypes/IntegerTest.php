@@ -1,13 +1,11 @@
 <?php
 
-use \Mu\Integer;
-
 class IntegerTest extends MuPHPUnitExtensions
 {
 
     public function test_integer()
     {
-        $integer = new Integer();
+        $integer = new \Mu\MockInteger();
         $expected = 3;
         $this->assertEquals($expected, $integer->prepare($expected));
         $this->assertTrue($integer->validate($expected));
