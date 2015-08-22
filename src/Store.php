@@ -8,7 +8,7 @@ namespace fijma\Mu;
  * Records are arrays of the following form:
  *     [     'id' => integer,            // unique id
  *         'type' => string,             // the record type
- *      'version' => string,             // version id (for optimistic locking)
+ *      'version' => string,             // version id (for optimistic locking and version history)
  *      'deleted' => boolean,            // flags whether record is deleted (no hard deletes)
  *         'data' => ['key' => value...] // array of key/value pairs of record properties
  *     ]
