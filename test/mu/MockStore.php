@@ -1,6 +1,6 @@
 <?php
 
-use \Mu\Store;
+use \fijma\Mu\Store;
 /**
  * A datastore for testing the Mu api.
  */
@@ -93,10 +93,10 @@ class MockStore extends Store
 
     public function fieldtypes()
     {
-        return ['boolean' => '\Mu\MockBoolean',
-                'float' => '\Mu\MockFloat',
-                'integer' => '\Mu\MockInteger',
-                'string' => '\Mu\MockString'];
+        return ['boolean' => '\fijma\Mu\MockBoolean',
+                'float' => '\fijma\Mu\MockFloat',
+                'integer' => '\fijma\Mu\MockInteger',
+                'string' => '\fijma\Mu\MockString'];
     }
 
     public function register_fieldtype($fieldtype, $implementing_class)
@@ -124,7 +124,7 @@ class MockStore extends Store
 
     public function searchers()
     {
-            return ['default' => '\Mu\MockSearcher'];
+            return ['default' => '\fijma\Mu\MockSearcher'];
     }
 
     public function register_searcher($searcher, $implementing_class)

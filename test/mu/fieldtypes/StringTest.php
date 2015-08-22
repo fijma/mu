@@ -5,7 +5,7 @@ class StringTest extends MuPHPUnitExtensions
 
     public function test_string()
     {
-        $string = new \Mu\MockString();
+        $string = new \fijma\Mu\MockString();
         $expected = 'string';
         $this->assertEquals($expected, $string->prepare($expected));
         $this->assertTrue($string->validate($expected));

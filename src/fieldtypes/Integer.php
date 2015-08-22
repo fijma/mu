@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-abstract class Integer implements \Mu\Fieldtype
+abstract class Integer implements \fijma\Mu\Fieldtype
 {
 
     abstract public function create($label);

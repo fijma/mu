@@ -1,6 +1,6 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
 /**
  * Field types handle the conversion of php data to/from the underlying

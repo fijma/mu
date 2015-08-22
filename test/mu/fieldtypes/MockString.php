@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-class MockString extends \Mu\String implements \Mu\Fieldtype
+class MockString extends \fijma\Mu\String implements \fijma\Mu\Fieldtype
 {
     
     public function create($label)

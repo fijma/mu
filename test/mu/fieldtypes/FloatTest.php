@@ -5,7 +5,7 @@ class FloatTest extends MuPHPUnitExtensions
 
     public function test_float()
     {
-        $float = new \Mu\MockFloat();
+        $float = new \fijma\Mu\MockFloat();
         $expected = 3.14;
         $this->assertEquals($expected, $float->prepare($expected));
         $this->assertTrue($float->validate($expected));

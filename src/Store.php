@@ -1,6 +1,6 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
 /**
  * Defines the api for Mu data repositories.

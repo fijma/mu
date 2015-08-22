@@ -1,12 +1,12 @@
 <?php
 
-use \Mu\Mu;
-use \Mu\Store;
-use \Mu\Boolean;
-use \Mu\DateTime;
-use \Mu\Float;
-use \Mu\Integer;
-use \Mu\String;
+use \fijma\Mu\Mu;
+use \fijma\Mu\Store;
+use \fijma\Mu\Boolean;
+use \fijma\Mu\DateTime;
+use \fijma\Mu\Float;
+use \fijma\Mu\Integer;
+use \fijma\Mu\String;
 
 
 class MuTest extends MuPHPUnitExtensions
@@ -217,7 +217,7 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_can_register_fieldtypes()
     {
         $expected = ['boolean', 'datetime', 'float', 'integer', 'string'];
-        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
+        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
         $actual = $this->mu->fieldtypes();
         $this->assertEquals(sort($expected), sort($actual));
     }
@@ -228,7 +228,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_gets_an_exception_when_registering_a_fieldtype_fails()
     {
-        $this->mu->register_fieldtype('bugger', '\Mu\MockBoolean');
+        $this->mu->register_fieldtype('bugger', '\fijma\Mu\MockBoolean');
     }
 
     /**
@@ -237,7 +237,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_registering_an_existing_fieldtype()
     {
-        $this->mu->register_fieldtype('boolean', '\Mu\MockBoolean');
+        $this->mu->register_fieldtype('boolean', '\fijma\Mu\MockBoolean');
     }
 
     /**
@@ -246,7 +246,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_if_fieldtype_name_is_not_a_string()
     {
-        $this->mu->register_fieldtype(1, '\Mu\MockBoolean');
+        $this->mu->register_fieldtype(1, '\fijma\Mu\MockBoolean');
     }
 
     /**
@@ -260,7 +260,7 @@ class MuTest extends MuPHPUnitExtensions
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Fieldtype implementing class must implement the \Mu\FieldType interface.
+     * @expectedExceptionMessage Fieldtype implementing class must implement the \fijma\Mu\FieldType interface.
      */
     public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_fieldtype_interface()
     {
@@ -269,7 +269,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_one_invalid_data_field()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
+        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
         $expected = 'Received invalid data for the following field: publishdate(que).';
         $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
         $this->assertEquals($expected, $actual);
@@ -277,7 +277,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
     {
-        $this->mu->register_fieldtype('datetime', '\Mu\MockDateTime');
+        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
         $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
         $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
         $this->assertEquals($expected, $actual);
@@ -418,7 +418,7 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_can_register_searchers()
     {
         $expected = ['default', 'tester'];
-        $this->mu->register_searcher('tester', '\Mu\MockSearcher');
+        $this->mu->register_searcher('tester', '\fijma\Mu\MockSearcher');
         $actual = $this->mu->searchers();
         $this->assertEquals(sort($expected), sort($actual));
     }
@@ -429,7 +429,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_gets_an_exception_when_registering_a_searcher_fails()
     {
-        $this->mu->register_searcher('bugger', '\Mu\MockSearcher');
+        $this->mu->register_searcher('bugger', '\fijma\Mu\MockSearcher');
     }
 
     /**
@@ -438,7 +438,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_registering_an_existing_searcher()
     {
-        $this->mu->register_searcher('default', '\Mu\MockSearcher');
+        $this->mu->register_searcher('default', '\fijma\Mu\MockSearcher');
     }
 
     /**
@@ -447,7 +447,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_if_searcher_name_is_not_a_string()
     {
-        $this->mu->register_searcher(1, '\Mu\MockSearcher');
+        $this->mu->register_searcher(1, '\fijma\Mu\MockSearcher');
     }
 
     /**
@@ -461,7 +461,7 @@ class MuTest extends MuPHPUnitExtensions
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Search provider implementing class must implement the \Mu\Searcher interface.
+     * @expectedExceptionMessage Search provider implementing class must implement the \fijma\Mu\Searcher interface.
      */
     public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_searcher_interface()
     {

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-class MockFloat extends \Mu\Float implements \Mu\Fieldtype
+class MockFloat extends \fijma\Mu\Float implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)

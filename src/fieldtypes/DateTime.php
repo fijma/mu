@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-abstract class DateTime implements \Mu\Fieldtype
+abstract class DateTime implements \fijma\Mu\Fieldtype
 {
 
     abstract public function create($label);

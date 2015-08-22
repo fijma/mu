@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-class MockInteger extends \Mu\Integer implements \Mu\Fieldtype
+class MockInteger extends \fijma\Mu\Integer implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)

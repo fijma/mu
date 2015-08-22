@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-abstract class Float implements \Mu\Fieldtype
+abstract class Float implements \fijma\Mu\Fieldtype
 {
 
     abstract public function create($label);

@@ -1,6 +1,6 @@
 <?php
 
-use \Mu\Mu;
+use fijma\Mu\Mu;
 
 class MockMu extends Mu
 {

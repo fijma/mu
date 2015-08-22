@@ -5,7 +5,7 @@ class IntegerTest extends MuPHPUnitExtensions
 
     public function test_integer()
     {
-        $integer = new \Mu\MockInteger();
+        $integer = new \fijma\Mu\MockInteger();
         $expected = 3;
         $this->assertEquals($expected, $integer->prepare($expected));
         $this->assertTrue($integer->validate($expected));

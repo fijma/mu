@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-class MockDateTime extends \Mu\DateTime implements \Mu\Fieldtype
+class MockDateTime extends \fijma\Mu\DateTime implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)

@@ -5,7 +5,7 @@ class BooleanTest extends MuPHPUnitExtensions
 
     public function test_boolean()
     {
-        $boolean = new \Mu\MockBoolean();
+        $boolean = new \fijma\Mu\MockBoolean();
         $expected = true;
         $this->assertEquals($expected, $boolean->prepare($expected));
         $this->assertTrue($boolean->validate($expected));

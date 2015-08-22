@@ -1,6 +1,6 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
 /**
  * Defines the api, performs data validation.
@@ -11,7 +11,7 @@ class Mu
     // The api version
     private $version = '0.9.0';
 
-    // The \Mu\Store instance used to access the repository.
+    // The \fijma\Mu\Store instance used to access the repository.
     protected $store;
 
     // The fieldtypes supported by the repository.
@@ -23,7 +23,7 @@ class Mu
     // The search providers supported by the repository.
     protected $searchers = array();
 
-    public function __construct(\Mu\Store $store)
+    public function __construct(\fijma\Mu\Store $store)
     {
         $this->store = $store;
         $this->load_fieldtypes();
@@ -36,7 +36,7 @@ class Mu
         return $this->version;
     }
 
-    // Creates a new record (after validating the data). See \Mu\Store for documentation.
+    // Creates a new record (after validating the data). See \fijma\Mu\Store for documentation.
     public function create($type, Array $data)
     {
         $errors = $this->validate($type, $data);
@@ -44,19 +44,19 @@ class Mu
         return $this->store->create($type, $data);
     }
 
-    // Returns the record for the given id. See \Mu\Store for documentation.
+    // Returns the record for the given id. See \fijma\Mu\Store for documentation.
     public function get($id)
     {
         return $this->store->get($id);
     }
 
-    // Deletes the given record. See \Mu\Store for documentation.
+    // Deletes the given record. See \fijma\Mu\Store for documentation.
     public function delete(Array $record)
     {
         return $this->store->delete($record);
     }
 
-    // Updates the given record (after validating the data). See \Mu\Store for documentation.
+    // Updates the given record (after validating the data). See \fijma\Mu\Store for documentation.
     public function update(Array $record)
     {
         $errors = $this->validate_record($record);
@@ -68,13 +68,13 @@ class Mu
         return $this->store->update($record);
     }
 
-    // Creates a relationship between two records. See \Mu\Store for documentation.
+    // Creates a relationship between two records. See \fijma\Mu\Store for documentation.
     public function relate($relationship_type, $from, $to)
     {
         $this->store->relate($relationship_type, $from, $to);
     }
 
-    // Removes a relationship between two records. See \Mu\Store for documentation.
+    // Removes a relationship between two records. See \fijma\Mu\Store for documentation.
     public function unrelate($relationship_type, $from, $to)
     {
         $this->store->unrelate($relationship_type, $from, $to);
@@ -110,8 +110,8 @@ class Mu
             throw new \Exception('Fieldtype implementing class \'' . $implementing_class . '\' does not exist.');
         }
 
-        if(!in_array('Mu\FieldType', class_implements($implementing_class))) {
-            throw new \Exception('Fieldtype implementing class must implement the \\Mu\\FieldType interface.');
+        if(!in_array('fijma\Mu\FieldType', class_implements($implementing_class))) {
+            throw new \Exception('Fieldtype implementing class must implement the \\fijma\\Mu\\FieldType interface.');
         }
 
         $this->store->register_fieldtype($fieldtype, $implementing_class);
@@ -165,7 +165,7 @@ class Mu
         $this->recordtypes[$recordtype] = $fieldtypes;
     }
 
-    // Validates a record (ie as defined in \Mu\Store, and *not* the data itself).
+    // Validates a record (ie as defined in \fijma\Mu\Store, and *not* the data itself).
     // Returns a message detailing the errors (empty string on success).
     protected function validate_record($record)
     {
@@ -275,8 +275,8 @@ class Mu
             throw new \Exception('Search provider implementing class \'' . $implementing_class . '\' does not exist.');
         }
 
-        if(!in_array('Mu\Searcher', class_implements($implementing_class))) {
-            throw new \Exception('Search provider implementing class must implement the \\Mu\\Searcher interface.');
+        if(!in_array('fijma\Mu\Searcher', class_implements($implementing_class))) {
+            throw new \Exception('Search provider implementing class must implement the \\fijma\\Mu\\Searcher interface.');
         }
 
         $this->store->register_searcher($searcher, $implementing_class);

@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-abstract class Boolean implements \Mu\Fieldtype
+abstract class Boolean implements \fijma\Mu\Fieldtype
 {
 
     abstract public function create($label);

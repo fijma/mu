@@ -1,8 +1,8 @@
 <?php
 
-namespace Mu;
+namespace fijma\Mu;
 
-class MockSearcher implements \Mu\Searcher
+class MockSearcher implements \fijma\Mu\Searcher
 {
 
     public function find($record_type, $params = []){}
