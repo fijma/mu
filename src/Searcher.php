@@ -16,7 +16,7 @@ interface Searcher
 
     /**
      * Returns all entries of the given $record_type.
-     * Params are:
+     * Parameterss are:
      *     - filter: array of [field => criteria] tuples to filter the results by.
      *     - order: array of [field => boolean] tuples to sort the results by. True indicates ascending, false indicates descending.
      *     - limit: limit the number of results to return.
@@ -27,7 +27,7 @@ interface Searcher
 
     /**
      * Returns all records which share a relationship with the record defined by $record_id.
-     * Params are:
+     * Parameters are:
      *     - relationship_type: the type of relationship to return.
      *     - direction: the direction of the relationship. 'to' indicates outgoing relationships with respect to the given $record_id.
      *     - record_type: filters results to only those records matching the given record_type.
@@ -35,5 +35,11 @@ interface Searcher
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */
     public function related($record_id, $params = []);
+
+    /**
+     * Returns the version history for the given record.
+     * This function has not parameters.
+     */
+    public function versions($record_id);
 
 }
