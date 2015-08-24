@@ -9,9 +9,13 @@ abstract class Integer implements \fijma\Mu\Fieldtype
 
     abstract public function prepare($value);
 
-    public function validate($value)
+    public function validate($value, $optional = false)
     {
-        return is_int($value);
+        if ($optional) {
+            return is_null($value) || is_int($value);
+        } else {
+            return is_int($value);
+        }
     }
 
     abstract public function convert($value);

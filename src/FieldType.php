@@ -26,8 +26,9 @@ interface FieldType
 
     /**
      * Returns a boolean indicating whether $value meets the definition of the FieldType.
+     * If the $optional flag is true, validate must return true if the value is an appropriate null value for the field type.
      */
-    public function validate($value);
+    public function validate($value, $optional = false);
 
     
     /**
