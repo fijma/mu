@@ -108,10 +108,10 @@ class MockStore extends Store
 
     public function recordtypes()
     {
-        return ['article' => ['title' => 'string',
-                              'publishdate' => 'datetime',
-                              'summary' => 'string',
-                              'article' => 'string']];
+        return ['article' => ['title' => ['string', false],
+                              'publishdate' => ['datetime', false],
+                              'summary' => ['string', false],
+                              'article' => ['string', false]]];
     }
 
     public function register_recordtype($recordtype, Array $fieldtypes)

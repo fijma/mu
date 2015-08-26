@@ -131,6 +131,8 @@ class Mu
     }
 
     // Registers a new recordtype.
+    // Note that we accept a shorthand method of defining a field by the fieldtype alone if
+    // it is mandatory. Otherwise, we need to supply the definition as an array.
     public function register_recordtype($recordtype, Array $fieldtypes)
     {
         if(!is_string($recordtype)) {
@@ -145,7 +147,30 @@ class Mu
             throw new \Exception('Fieldtype array cannot be empty.');
         }
 
-        $diff = array_diff($fieldtypes, array_keys($this->fieldtypes));
+        $fieldtype_list = array();
+        $amended_fieldtypes = array();
+
+        foreach($fieldtypes as $fieldname => $definition) {
+            if (!is_string($fieldname)) {
+                throw new \Exception('Field names must be strings.');
+            }
+            if (is_string($definition)) {
+                $fieldtype_list[] = $definition;
+                $amended_fieldtypes[$fieldname] = [$definition, false];
+            } elseif (is_array($definition)) {
+                if (!count($definition) === 2) {
+                    throw new \Exception('Received invalid fieldname definition array.');
+                }
+                $fieldtype_list[] = $definition[0];
+                if (!is_bool($definition[1])) {
+                    throw new \Exception('Optional flag must be a boolean.');
+                }
+                $amended_fieldtypes[$fieldname] = $definition;
+            }
+
+        }
+
+        $diff = array_diff($fieldtype_list, array_keys($this->fieldtypes));
         if(!empty($diff)) {
             $s = 'The following fieldtype';
             $s .= count($diff) > 1 ? 's are ' : ' is ';
@@ -155,14 +180,8 @@ class Mu
             throw new \Exception($s);
         }
 
-        foreach(array_keys($fieldtypes) as $fieldname) {
-            if (!is_string($fieldname)) {
-                throw new \Exception('Field names must be strings.');
-            }
-        }
-
-        $this->store->register_recordtype($recordtype, $fieldtypes);
-        $this->recordtypes[$recordtype] = $fieldtypes;
+        $this->store->register_recordtype($recordtype, $amended_fieldtypes);
+        $this->recordtypes[$recordtype] = $amended_fieldtypes;
     }
 
     // Validates a record (ie as defined in \fijma\Mu\Store, and *not* the data itself).
@@ -225,7 +244,7 @@ class Mu
 
         $invalid_fields = array();
         foreach($definition as $field => $fieldtype) {
-            if(!$this->fieldtypes[$fieldtype]->validate($data[$field])) {
+            if(!$this->fieldtypes[$fieldtype[0]]->validate($data[$field], $fieldtype[1])) {
                 $invalid_fields[] = $field;
             }
         }
