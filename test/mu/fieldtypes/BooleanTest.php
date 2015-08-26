@@ -12,5 +12,6 @@ class BooleanTest extends MuPHPUnitExtensions
         $this->assertFalse($boolean->validate(5));
         $this->assertEquals($expected, $boolean->convert($expected));
         $this->assertNull($boolean->create('boolean'));
+        $this->assertTrue($boolean->validate(null, true));
     }
 }

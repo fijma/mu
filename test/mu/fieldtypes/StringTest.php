@@ -12,5 +12,7 @@ class StringTest extends MuPHPUnitExtensions
         $this->assertFalse($string->validate(5));
         $this->assertEquals($expected, $string->convert($expected));
         $this->assertNull($string->create('string'));
+        $this->assertTrue($string->validate(null, true));
+        
     }
 }

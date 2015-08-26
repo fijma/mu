@@ -12,7 +12,7 @@ abstract class String implements \fijma\Mu\Fieldtype
     public function validate($value, $optional = false)
     {
         if ($optional) {
-            return is_null($value) || is_string($value) || $value === '';
+            return is_null($value) || is_string($value);
         } else {
             return is_string($value);
         }

@@ -12,5 +12,6 @@ class FloatTest extends MuPHPUnitExtensions
         $this->assertFalse($float->validate(5));
         $this->assertEquals($expected, $float->convert($expected));
         $this->assertNull($float->create('float'));
+        $this->assertTrue($float->validate(null, true));
     }
 }
