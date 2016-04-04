@@ -38,7 +38,7 @@ interface Searcher
 
     /**
      * Returns the version history for the given record.
-     * This function has not parameters.
+     * This function has no parameters.
      */
     public function versions($record_id);
 
