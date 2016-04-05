@@ -20,7 +20,7 @@ namespace fijma\Mu;
  *     ['fieldtype_name' => 'implementing_class', ...]
  *
  * Record type arrays are of the following form:
- *    ['field' => 'fieldtype_name', (bool)optional], ...]
+ *    ['field' => ['fieldtype_name', (bool)optional], ...]
  * 
  */
 abstract class Store
