@@ -16,7 +16,7 @@ interface Searcher
 
     /**
      * Returns all entries of the given $record_type.
-     * Parameterss are:
+     * Parameters are:
      *     - filter: array of [field => criteria] tuples to filter the results by.
      *     - order: array of [field => boolean] tuples to sort the results by. True indicates ascending, false indicates descending.
      *     - limit: limit the number of results to return.
