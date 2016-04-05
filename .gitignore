@@ -1,2 +1,5 @@
 *.sublime*
-report/
+report
+vendor
+phpunit.xml
+composer.lock
