@@ -158,14 +158,19 @@ class Mu
                 $fieldtype_list[] = $definition;
                 $amended_fieldtypes[$fieldname] = [$definition, false];
             } elseif (is_array($definition)) {
-                if (!count($definition) === 2) {
-                    throw new \Exception('Received invalid fieldname definition array.');
+                if (count($definition) !== 2) {
+                    throw new \Exception('Received invalid fieldtype definition array.');
+                }
+                if (!is_string($definition[0])) {
+                    throw new \Exception('Received invalid fieldtype definition array.');
                 }
                 $fieldtype_list[] = $definition[0];
                 if (!is_bool($definition[1])) {
                     throw new \Exception('Optional flag must be a boolean.');
                 }
                 $amended_fieldtypes[$fieldname] = $definition;
+            } else {
+                throw new \Exception('Received invalid fieldtype definition array.');
             }
 
         }

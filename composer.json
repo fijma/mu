@@ -1,0 +1,24 @@
+{
+    "name": "fijma/mu",
+    "description": "A cms microframework.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mathew Fidge",
+            "email": "mathew.fidge@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": ">=3.7",
+	    "phpunit/dbunit": ">=1.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "fijma\\mu\\": "src"
+        }
+    }
+}

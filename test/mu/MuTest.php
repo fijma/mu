@@ -366,6 +366,49 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->register_recordtype('test', ['blip' => 'bleep', 'blup' => 'bloop']);
     }
 
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    */
+    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_0()
+    {
+        $this->mu->register_recordtype('test', ['name' => ['invalid_array']]);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    */
+    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_1()
+    {
+        $this->mu->register_recordtype('test', ['name' => [1, false]]);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Optional flag must be a boolean.
+    */
+    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_2()
+    {
+        $this->mu->register_recordtype('test', ['name' => ['string', 1]]);
+    }
+
+    /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    */
+    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_3()
+    {
+        $this->mu->register_recordtype('test', ['name' => 1]);
+    }
+
+    public function test_mu_can_register_recordtypes_with_optional_fieldtypes()
+    {
+        $this->mu->register_recordtype('author', ['name' => ['string', true]]);
+        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
+
+    }
+
     public function test_mu_returns_an_error_string_when_missing_one_record_field()
     {
         $expected = 'Invalid record - missing the following field: id.';
