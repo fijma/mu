@@ -23,19 +23,19 @@ namespace fijma\Mu;
  *    ['field' => ['fieldtype_name', (bool)optional], ...]
  * 
  */
-abstract class Store
+interface Store
 {
 
     /**
      * Creates a new record of given type with given data and returns a record array.
      * This function must throw an Exception on failure.
      */
-    abstract public function create($type, Array $data);
+    public function create($type, Array $data);
 
     /**
      * Returns the record for the given id, or null if id not found.
      */
-    abstract public function get($id);
+    public function get($id);
 
     /**
      * Flags the given record as deleted in the repository.
@@ -43,20 +43,20 @@ abstract class Store
      * This function must throw an Exception on failure.
      * (You should probably just use the update function to do this.)
      */
-    abstract public function delete(Array $record);
+    public function delete(Array $record);
 
     /**
      * Performs a version check against the repository, saves the record,
      * and returns the updated record array.
      * This function must throw an Exception on failure.
      */
-    abstract public function update(Array $record);
+    public function update(Array $record);
 
     /**
      * Creates a relationship of the given type between two records.
      * This function must throw an Exception on failure.
      */
-    abstract public function relate($relationship_type, $from, $to);
+    public function relate($relationship_type, $from, $to);
 
     /**
      * Removes the given relationship.
@@ -64,39 +64,39 @@ abstract class Store
      * This function must throw an exception if the defined relationship does exist
      * but is not able to be deleted.
      */
-    abstract public function unrelate($relationship_type, $from, $to);
+    public function unrelate($relationship_type, $from, $to);
 
     /**
      * Returns an array of the field types registered in this store.
      */
-    abstract public function fieldtypes();
+    public function fieldtypes();
 
     /**
      * Adds a fieldtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    abstract public function register_fieldtype($fieldtype, $implementing_class);
+    public function register_fieldtype($fieldtype, $implementing_class);
     
     /**
      * Returns an array of the record types registered in this store.
      */
-    abstract public function recordtypes();
+    public function recordtypes();
 
     /**
      * Adds a recordtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    abstract public function register_recordtype($recordtype, Array $fieldtypes);
+    public function register_recordtype($recordtype, Array $fieldtypes);
 
     /**
      * Returns an array of the search providers registered in this store.
      */
-    abstract public function searchers();
+    public function searchers();
 
     /**
      * Adds a search provider to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    abstract public function register_searcher($name, $implementing_class);
+    public function register_searcher($name, $implementing_class);
 
 }

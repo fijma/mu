@@ -4,7 +4,7 @@ use \fijma\Mu\Store;
 /**
  * A datastore for testing the Mu api.
  */
-class MockStore extends Store
+class MockStore implements Store
 {
 
     // Store the data
