@@ -2,7 +2,7 @@
 
 namespace fijma\Mu;
 
-class MockInteger extends \fijma\Mu\Integer implements \fijma\Mu\Fieldtype
+class MockInteger implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)
@@ -18,5 +18,14 @@ class MockInteger extends \fijma\Mu\Integer implements \fijma\Mu\Fieldtype
     public function convert($value)
     {
         return $value;
+    }
+
+    public function validate($value, $optional = false)
+    {
+        if ($optional) {
+            return is_null($value) || is_int($value);
+        } else {
+            return is_int($value);
+        }
     }
 }

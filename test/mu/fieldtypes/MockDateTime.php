@@ -2,7 +2,7 @@
 
 namespace fijma\Mu;
 
-class MockDateTime extends \fijma\Mu\DateTime implements \fijma\Mu\Fieldtype
+class MockDateTime implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)
@@ -18,6 +18,15 @@ class MockDateTime extends \fijma\Mu\DateTime implements \fijma\Mu\Fieldtype
     public function convert($value)
     {
         return $value;
+    }
+
+    public function validate($value, $optional = false)
+    {
+        if ($optional) {
+            return is_null($value) || $value instanceof \DateTime;
+        } else {
+            return $value instanceof \DateTime;
+        }
     }
 
 }

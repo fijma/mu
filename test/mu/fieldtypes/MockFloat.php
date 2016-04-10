@@ -2,7 +2,7 @@
 
 namespace fijma\Mu;
 
-class MockFloat extends \fijma\Mu\Float implements \fijma\Mu\Fieldtype
+class MockFloat implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)
@@ -17,5 +17,14 @@ class MockFloat extends \fijma\Mu\Float implements \fijma\Mu\Fieldtype
 
     public function convert($value){
         return $value;
+    }
+
+    public function validate($value, $optional = false)
+    {
+        if ($optional) {
+            return is_null($value) || is_float($value);
+        } else {
+            return is_float($value);
+        }
     }
 }

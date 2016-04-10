@@ -2,7 +2,7 @@
 
 namespace fijma\Mu;
 
-class MockBoolean extends \fijma\Mu\Boolean implements \fijma\Mu\Fieldtype
+class MockBoolean implements \fijma\Mu\Fieldtype
 {
 
     public function create($label)
@@ -19,5 +19,14 @@ class MockBoolean extends \fijma\Mu\Boolean implements \fijma\Mu\Fieldtype
 	{
 		return $value;
 	}
+
+    public function validate($value, $optional = false)
+    {
+        if ($optional) {
+            return is_null($value) || is_bool($value);
+        } else {
+            return is_bool($value);
+        }
+    }
 
 }
