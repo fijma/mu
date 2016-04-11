@@ -50,6 +50,12 @@ class MockStore implements Store
         return $this->update($record);
     }
 
+    public function undelete(Array $record)
+    {
+        $record['deleted'] = false;
+        return $this->update($record);
+    }
+
     public function update(Array $record)
     {
         if (array_key_exists($record['id'], $this->store)) {

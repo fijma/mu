@@ -118,6 +118,34 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->delete($record);
     }
 
+    public function test_mu_undeletes_a_record()
+    {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $data = ['message' => "G'day cobber."];
+        $record = $this->mu->create('record', $data);
+        $this->assertArrayHasKey('deleted', $record);
+        $this->assertInternalType('boolean', $record['deleted']);
+        $this->assertFalse($record['deleted']);
+        $record = $this->mu->delete($record);
+        $this->assertArrayHasKey('deleted', $record);
+        $this->assertInternalType('boolean', $record['deleted']);
+        $this->assertTrue($record['deleted']);
+        $record = $this->mu->undelete($record);
+        $this->assertArrayHasKey('deleted', $record);
+        $this->assertInternalType('boolean', $record['deleted']);
+        $this->assertFalse($record['deleted']);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Record does not exist.
+     */
+    public function test_mu_throws_an_exception_when_undelete_fails()
+    {
+        $record = ['id' => 0];
+        $this->mu->undelete($record);
+    }
+
     public function test_mu_updates_a_record()
     {
         $this->mu->register_recordtype('record', ['message' => 'string']);

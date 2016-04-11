@@ -56,6 +56,12 @@ class Mu
         return $this->store->delete($record);
     }
 
+    // Undeletes the given record. See \fijma\Mu\Store for documentation.
+    public function undelete(Array $record)
+    {
+        return $this->store->undelete($record);
+    }
+
     // Updates the given record (after validating the data). See \fijma\Mu\Store for documentation.
     public function update(Array $record)
     {

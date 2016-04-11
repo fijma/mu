@@ -46,6 +46,14 @@ interface Store
     public function delete(Array $record);
 
     /**
+     * Removes the delete flag for the given record.
+     * Returns the undeleted record.
+     * This function must throw an Exception on failure.
+     * (You should probably just use the update function to do this.)
+     */
+    public function undelete(Array $record);
+
+    /**
      * Performs a version check against the repository, saves the record,
      * and returns the updated record array.
      * This function must throw an Exception on failure.
