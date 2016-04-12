@@ -20,15 +20,11 @@ class Mu
     // The recordtypes supported by the repository.
     protected $recordtypes = array();
 
-    // The search providers supported by the repository.
-    protected $searchers = array();
-
     public function __construct(\fijma\Mu\Store $store)
     {
         $this->store = $store;
         $this->load_fieldtypes();
         $this->load_recordtypes();
-        $this->load_searchers();
     }
 
     public function version()
@@ -275,52 +271,30 @@ class Mu
 
     }
 
-    // Instantiates the search provider objects into the fieldtypes array.
-    protected function load_searchers()
+    /**
+     * Returns all entries of the given $record_type. See \fijma\Mu\Store for documentation.
+     */
+
+    public function find($record_type, $params = [])
     {
-        $searchers = $this->store->searchers();
-        foreach ($searchers as $searcher => $implementing_class) {
-            $this->searchers[$searcher] = new $implementing_class();
-        }
+
     }
 
-    // Reports the registered search providers.
-    public function searchers()
+    /**
+     * Returns all records which share a relationship with the record defined by $record_id.
+     * See \fijma\Mu\Store for documentation.
+     */
+    public function related($record_id, $params = [])
     {
-        return array_keys($this->searchers);
+
     }
 
-    // Registers a new search provider.
-    public function register_searcher($searcher, $implementing_class)
+    /**
+     * Returns the version history for the given record.
+     */
+    public function versions($record_id)
     {
-        if (in_array($searcher, $this->searchers())) {
-            throw new \Exception('Search provider ' . $searcher . ' is already registered.');
-        }
-
-        if (!is_string($searcher)) {
-            throw new \Exception('Search provider name must be a string.');
-        }
-
-        if (!class_exists($implementing_class)) {
-            throw new \Exception('Search provider implementing class \'' . $implementing_class . '\' does not exist.');
-        }
-
-        if(!in_array('fijma\Mu\Searcher', class_implements($implementing_class))) {
-            throw new \Exception('Search provider implementing class must implement the \\fijma\\Mu\\Searcher interface.');
-        }
-
-        $this->store->register_searcher($searcher, $implementing_class);
-        $this->searchers[$searcher] = new $implementing_class();
-    }
-
-    // Returns the requested search provider
-    public function searcher($searcher)
-    {
-        if(!in_array($searcher, $this->searchers())) {
-            throw new \Exception('Search provider ' . $searcher . ' has not been registered.');
-        }
-
-        return $this->searchers[$searcher];
+        
     }
 
 }

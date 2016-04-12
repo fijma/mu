@@ -128,17 +128,19 @@ class MockStore implements Store
 
     }
 
-    public function searchers()
+    public function find($record_type, $params = [])
     {
-            return ['default' => '\fijma\Mu\MockSearcher'];
+
     }
 
-    public function register_searcher($searcher, $implementing_class)
+    public function related($record_id, $params = [])
     {
-        if($searcher === 'bugger') {
-            throw new \Exception('Failed to register search provider ' . $searcher . '.');
-        }
+
     }
 
+    public function versions($record_id)
+    {
+        
+    }
 
 }
