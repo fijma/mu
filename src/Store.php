@@ -63,6 +63,7 @@ interface Store
     /**
      * Creates a relationship of the given type between two records.
      * This function must throw an Exception on failure.
+     * Note $from and $to represent the record ids, not the records themselves.
      */
     public function relate($relationship_type, $from, $to);
 
@@ -71,6 +72,7 @@ interface Store
      * This function must not throw an exception if the defined relationship does not exist.
      * This function must throw an exception if the defined relationship does exist
      * but is not able to be deleted.
+     * Note $from and $to represent the record ids, not the records themselves.
      */
     public function unrelate($relationship_type, $from, $to);
 
@@ -84,6 +86,14 @@ interface Store
      * This function must throw an exception if the registration fails.
      */
     public function register_fieldtype($fieldtype, $implementing_class);
+
+    /**
+    * Removes a fieldtype definition from the store's registry.
+    * This function must throw an exception if the deregistration fails.
+    * Deregistration should not prevent a record using the fieldtype from being retrieved.
+    * It should prevent all other actions for a record using that fieldtype.
+    */
+    public function deregister_fieldtype($fieldtype);
     
     /**
      * Returns an array of the record types registered in this store.
@@ -95,6 +105,14 @@ interface Store
      * This function must throw an exception if the registration fails.
      */
     public function register_recordtype($recordtype, Array $fieldtypes);
+
+    /**
+     * Removes a recordtype defintion from the store's registry.
+     * This function must throw an exception if the deregistration fails.
+     * Deregistration should not prevent a record of the deregistered recordtype from being retrieved.
+     * It should prevent all other actions for a record of that recordtype.
+     */
+    public function deregister_recordtype($recordtype);
 
     /**
      * Returns all entries of the given $record_type.
@@ -110,9 +128,9 @@ interface Store
     /**
      * Returns all records which share a relationship with the record defined by $record_id.
      * Parameters are:
-     *     - relationship_type: the type of relationship to return.
-     *     - direction: the direction of the relationship. 'to' indicates outgoing relationships with respect to the given $record_id.
-     *     - record_type: filters results to only those records matching the given record_type.
+     *     - relationship_type: filters results to only those relationships matching this type.
+     *     - direction: the direction of the relationship. 'to' indicates incoming relationships with respect to the given $record_id. If omitted, all relationships are returned.
+     *     - record_type: filters results to only those related records matching this type.
      *     - filter: array of [field => criteria] tuples to filter the results by. Only valid if record_type has been specified.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */

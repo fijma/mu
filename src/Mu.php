@@ -49,12 +49,16 @@ class Mu
     // Deletes the given record. See \fijma\Mu\Store for documentation.
     public function delete(Array $record)
     {
+        $errors = $this->validate_record($record);
+        if($errors) throw new \Exception($errors);
         return $this->store->delete($record);
     }
 
     // Undeletes the given record. See \fijma\Mu\Store for documentation.
     public function undelete(Array $record)
     {
+        $errors = $this->validate_record($record);
+        if($errors) throw new \Exception($errors);
         return $this->store->undelete($record);
     }
 
@@ -118,6 +122,18 @@ class Mu
 
         $this->store->register_fieldtype($fieldtype, $implementing_class);
         $this->fieldtypes[$fieldtype] = new $implementing_class();
+    }
+
+    // Deregisters a fieldtype. Returns true on success, false if the fieldtype was not registerd.
+    public function deregister_fieldtype($fieldtype)
+    {
+        if (array_key_exists($fieldtype, $this->fieldtypes)) {
+            $this->store->deregister_fieldtype($fieldtype);
+            unset($this->fieldtypes[$fieldtype]);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Saves the recordtypes supported by the repository.
@@ -189,6 +205,18 @@ class Mu
 
         $this->store->register_recordtype($recordtype, $amended_fieldtypes);
         $this->recordtypes[$recordtype] = $amended_fieldtypes;
+    }
+
+    // Deregisters a recordtype. Returns true on success, false if the recordtype was not registerd.
+    public function deregister_recordtype($recordtype)
+    {
+        if (array_key_exists($recordtype, $this->recordtypes)) {
+            $this->store->deregister_recordtype($recordtype);
+            unset($this->recordtypes[$recordtype]);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     // Validates a record (ie as defined in \fijma\Mu\Store, and *not* the data itself).

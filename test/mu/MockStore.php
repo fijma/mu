@@ -143,4 +143,14 @@ class MockStore implements Store
         
     }
 
+    public function deregister_fieldtype($fieldtype)
+    {
+
+    }
+
+    public function deregister_recordtype($recordtype)
+    {
+        
+    }
+
 }

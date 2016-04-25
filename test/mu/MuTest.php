@@ -114,7 +114,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_delete_fails()
     {
-        $record = ['id' => 0];
+        $record = ['id' => 0, 'type' => '', 'version' => '', 'deleted' => false, 'data' => []];
         $this->mu->delete($record);
     }
 
@@ -142,7 +142,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_undelete_fails()
     {
-        $record = ['id' => 0];
+        $record = ['id' => 0, 'type' => '', 'version' => '', 'deleted' => true, 'data' => []];
         $this->mu->undelete($record);
     }
 
