@@ -480,5 +480,30 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals($expected, $actual);
     }
 
+    public function test_mu_can_deregister_fieldtypes()
+    {
+        $expected = ['datetime', 'float', 'integer', 'string'];
+        $this->assertTrue($this->mu->deregister_fieldtype('boolean'));
+        $actual = $this->mu->fieldtypes();
+        $this->assertEquals(sort($expected), sort($actual));
+    }
+
+    public function test_mu_returns_false_when_deregistering_a_non_existent_fieldtype()
+    {
+        $this->assertFalse($this->mu->deregister_fieldtype('bugger'));
+    }
+
+    public function test_mu_can_deregister_recordtypes()
+    {
+        $this->mu->register_recordtype('author', ['name' => 'string', 'email' => 'string']);
+        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
+        $this->assertTrue($this->mu->deregister_recordtype('article'));
+        $this->assertEquals(['author'], $this->mu->recordtypes());
+    }
+
+    public function test_mu_returns_false_when_deregistering_a_non_existent_recordtype()
+    {
+        $this->assertFalse($this->mu->deregister_recordtype('author'));
+    }
 
 }
