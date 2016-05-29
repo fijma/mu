@@ -101,7 +101,6 @@ class MockStore implements Store
     {
         return ['boolean' => '\fijma\Mu\MockBoolean',
                 'float' => '\fijma\Mu\MockFloat',
-                'integer' => '\fijma\Mu\MockInteger',
                 'string' => '\fijma\Mu\MockString'];
     }
 
@@ -145,12 +144,30 @@ class MockStore implements Store
 
     public function deregister_fieldtype($fieldtype)
     {
-
+        if($fieldtype === 'shite') {
+            throw new Exception();
+        }
     }
 
     public function deregister_recordtype($recordtype)
     {
-        
+        if($recordtype === 'shite') {
+            throw new Exception();
+        }
+    }
+
+    public function deregistered_fieldtypes()
+    {
+        return ['integer' => '\fijma\Mu\MockInteger'];
+
+    }
+
+    public function deregistered_recordtypes()
+    {
+        return ['listicle' => ['title' => ['string', false],
+                              'publishdate' => ['datetime', false],
+                              'summary' => ['string', false],
+                              'article' => ['string', false]]];
     }
 
 }

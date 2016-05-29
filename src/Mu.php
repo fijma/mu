@@ -14,11 +14,17 @@ class Mu
     // The \fijma\Mu\Store instance used to access the repository.
     protected $store;
 
-    // The fieldtypes supported by the repository.
+    // The field types supported by the repository.
     protected $fieldtypes = array();
 
-    // The recordtypes supported by the repository.
+    // The deregistered field types used by the repository (to access historical data).
+    protected $deregistered_fieldtypes = array();
+
+    // The record types supported by the repository.
     protected $recordtypes = array();
+
+    // The deregistered record types used by the repository (to access historical data).
+    protected $deregistered_recordtypes = array();
 
     public function __construct(\fijma\Mu\Store $store)
     {
@@ -86,12 +92,19 @@ class Mu
         $this->store->unrelate($relationship_type, $from, $to);
     }
 
-    // Instantiates the fieldtype objects into the fieldtypes array.
+    // Instantiates the field type objects into the fieldtypes array.
     protected function load_fieldtypes()
     {
+        // active field types
         $fieldtypes = $this->store->fieldtypes();
         foreach ($fieldtypes as $fieldtype => $implementing_class) {
             $this->fieldtypes[$fieldtype] = new $implementing_class();
+        }
+
+        // deregistered field types
+        $fieldtypes = $this->store->deregistered_fieldtypes();
+        foreach ($fieldtypes as $fieldtype => $implementing_class) {
+            $this->deregistered_fieldtypes[$fieldtype] = new $implementing_class();
         }
     }
 
@@ -136,10 +149,11 @@ class Mu
         }
     }
 
-    // Saves the recordtypes supported by the repository.
+    // Reads the recordtypes supported by the repository.
     protected function load_recordtypes()
     {
         $this->recordtypes = $this->store->recordtypes();
+        $this->deregistered_recordtypes = $this->store->deregistered_recordtypes();
     }
 
     // Reports the supported record types.

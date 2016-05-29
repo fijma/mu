@@ -32,7 +32,7 @@ interface FieldType
 
     
     /**
-     * Converts $value from its representation in the underlying repository to its php.
+     * Converts $value from its representation in the underlying repository to its php equivalent.
      * This function is complemented by the prepare() function.
      */
     public function convert($value);

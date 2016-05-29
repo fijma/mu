@@ -34,6 +34,9 @@ interface Store
 
     /**
      * Returns the record for the given id, or null if id not found.
+     * This function must use the fieldtypes->convert() function to get the php version of the data.
+     * Note that the store must support registered as well as deregistered field types and record types
+     * when retrieving existing records.
      */
     public function get($id);
 
@@ -82,6 +85,11 @@ interface Store
     public function fieldtypes();
 
     /**
+     * Returns an array of the deregistered field types in this store.
+     */
+    public function deregistered_fieldtypes();
+
+    /**
      * Adds a fieldtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
@@ -99,6 +107,11 @@ interface Store
      * Returns an array of the record types registered in this store.
      */
     public function recordtypes();
+
+    /**
+     * Returns an array of the deregistered record types in this store.
+     */
+    public function deregistered_recordtypes();
 
     /**
      * Adds a recordtype definition to the store's registry.

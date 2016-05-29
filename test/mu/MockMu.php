@@ -18,4 +18,15 @@ class MockMu extends Mu
     {
         return $this->validate($recordtype, $data);
     }
+
+    public function show_me_your_deregistered_fieldtypes()
+    {
+        return $this->deregistered_fieldtypes;
+    }
+
+    public function show_me_your_deregistered_recordtypes()
+    {
+        return $this->deregistered_recordtypes;
+    }
+
 }

@@ -238,16 +238,27 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_reports_the_fieldtypes_it_supports()
     {
-        $expected = ['boolean', 'float', 'integer', 'string'];
+        $expected = ['boolean', 'float', 'string'];
         $this->assertEquals($expected, $this->mu->fieldtypes());
+    }
+
+    public function test_mu_loads_deregistered_fieldtypes()
+    {
+        $expected = ['integer'];
+        $df = $this->mu->show_me_your_deregistered_fieldtypes();
+        $actual = array_keys($df);
+        $this->assertEquals($expected, $actual);
+        $this->assertInstanceOf('\fijma\Mu\MockInteger', $df['integer']);
     }
 
     public function test_mu_can_register_fieldtypes()
     {
-        $expected = ['boolean', 'datetime', 'float', 'integer', 'string'];
+        $expected = ['boolean', 'datetime', 'float', 'string'];
         $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
         $actual = $this->mu->fieldtypes();
-        $this->assertEquals(sort($expected), sort($actual));
+        sort($actual);
+        sort($expected);
+        $this->assertEquals($expected, $actual);
     }
 
     /**
@@ -314,6 +325,16 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_reports_the_recordtypes_it_supports()
     {
         $this->assertEquals(['article'], $this->mu->recordtypes());
+    }
+
+    public function test_mu_loads_deregistered_recordtypes()
+    {
+        $expected = ['listicle' => ['title' => ['string', false],
+                              'publishdate' => ['datetime', false],
+                              'summary' => ['string', false],
+                              'article' => ['string', false]]];
+        $actual = $this->mu->show_me_your_deregistered_recordtypes();
+        $this->assertEquals($expected, $actual);
     }
 
     public function test_mu_can_register_recordtypes()
@@ -504,6 +525,25 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_returns_false_when_deregistering_a_non_existent_recordtype()
     {
         $this->assertFalse($this->mu->deregister_recordtype('author'));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage
+     */
+    public function test_store_throws_an_exception_when_deregister_fieldtype_fails()
+    {
+        $this->mu->register_fieldtype('shite', '\fijma\Mu\MockDateTime');
+        $this->mu->deregister_fieldtype('shite');
+    }
+
+    /**
+     * @expectedException Exception
+     */
+    public function test_store_throws_an_exception_when_deregister_recordtype_fails()
+    {
+        $this->mu->register_recordtype('shite', ['name' => 'string']);
+        $this->mu->deregister_recordtype('shite');
     }
 
 }
