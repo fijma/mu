@@ -316,9 +316,90 @@ class Mu
     /**
      * Returns all entries of the given $record_type. See \fijma\Mu\Store for documentation.
      */
-
     public function find($record_type, $params = [])
     {
+
+    }
+
+    /**
+     * Validates arguments for the find function.
+     * A valid record type is:
+     *     0. A string
+     *     1. Is a valid record type (can be deregistered)
+     * A valid parameter array is:
+     *     2. An array
+     *     3. If it's not empty, it can only have the following keys: ['filter', 'order', 'limit', 'offset', 'deleted']
+     *     4. For each item, perform the following validations:
+     *         4.1. If filter, order, or deleted, confirm:
+     *             4.1.1. The value is an array
+     *             4.1.2. For each item in the array, confirm:
+     *                 4.1.2.1. Each key in the array is a valid field for the given record type
+     *                 4.1.2.2. If filter, each value in the array is valid for the field type
+     *                 4.1.2.3. If order or deleted, each value in the array is a boolen
+     *         4.2. If limit or offset, confirm the value is an integer
+     */
+    protected function validate_find_parameters($record_type, Array $params)
+    {
+        $errors = [];
+        $record_type_definition = [];
+
+        // 0. If it's not a string, we really can't go any further.
+        if (!is_string($record_type)) {
+            return 'Invalid record type. Expected string, received ' . gettype($record_type) . '.';
+        }
+
+        // 1. Similarly, if we can't find the record type, bomb out.
+        if(array_key_exists($record_type, $this->recordtypes)) {
+            $record_type_definition = $this->recordtypes[$record_type];
+        } elseif(array_key_exists($record_type, $this->deregistered_fieldtypes)) {
+            $record_type_definition = $this->deregistered_recordtypes[$record_type];
+        } else {
+            return 'Record type ' . $record_type . ' does not exist.';
+        }
+
+        // 2. If it's not an array, we haven't even started because of the type hint.
+        // 3. First, if empty we're good to go.
+        if (empty($params)) {
+            return '';
+        // 4. Otherwise, check that our keys are good.
+        } else {
+            $expected_keys = ['deleted', 'filter', 'limit', 'offset', 'order'];
+            $diff = array_diff($expected_keys, array_keys($params));
+            if (!empty($diff)) {
+                $s = 'Invalid parameter';
+                $s .= count($diff) > 1 ? 's: ' : ': ';
+                $s .= implode(', ', $diff);
+                $s .= '.';
+                $errors[] = $s;
+            }
+        }
+
+        // 5. Start the validation of the entries.
+        foreach ($params as $key => $value) {
+            switch ($key) {
+                case 'limit':
+                case 'offset':
+                    if (!is_integer($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected integer, received ' . gettype($value) . '.';
+                    }
+                    break;
+                case 'deleted':
+                case 'filter':
+                case 'order':
+                    // 6. Check that the value is an array.
+                    if (!is_array($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected array, received ' . gettype($value) . '.';
+                    }
+                    // 7. Check that each key is a valid field for the record type.
+                    // 8. If filter, each value is valid for the field type.
+                    // 9. If order or deleted, each value is a boolen.
+                     default:
+                    // This should be unreachable
+                    $errors[] = 'Invalid parameter: ' . $key . '.';
+                    break;
+            }
+        }
+
 
     }
 
