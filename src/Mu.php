@@ -391,15 +391,35 @@ class Mu
                         $errors[] = 'Invalid value for ' . $key . ': expected array, received ' . gettype($value) . '.';
                     }
                     // 7. Check that each key is a valid field for the record type.
-                    // 8. If filter, each value is valid for the field type.
-                    // 9. If order or deleted, each value is a boolen.
+                    foreach($value as $field => $value) {
+                        if(!array_key_exists($field, $record_type_definition)) {
+                            $errors[] = 'Invalid field for recordtype ' . $recordtype . ': ' . $field . '.';
+                        }
+                        // 8. If filter, each value is valid for the field type.
+                        if ($key === 'filter') {
+                            if(!$this->fieldtypes[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
+                                $errors[] = 'Invalid data provided for filter field: ' . $field . '.';
+                            }
+                        // 9. If order or deleted, each value is a boolen.
+                        } else {
+                            if(!is_bool($value)) {
+                                $errors[] = 'Invalid value received for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
+                            }
+                        }
+                    }
+                    // @codeCoverageIgnoreStart
                      default:
                     // This should be unreachable
                     $errors[] = 'Invalid parameter: ' . $key . '.';
                     break;
+                    // @codeCoverageIgnoreEnd
             }
         }
-
+        if(empty($errors)) {
+            return '';
+        } else {
+            // make the return string here.
+        }
 
     }
 
