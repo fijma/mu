@@ -520,6 +520,7 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
         $this->assertTrue($this->mu->deregister_recordtype('article'));
         $this->assertEquals(['author'], $this->mu->recordtypes());
+        $this->assertTrue(array_key_exists('article', $this->mu->show_me_your_deregistered_recordtypes()));
     }
 
     public function test_mu_returns_false_when_deregistering_a_non_existent_recordtype()
@@ -545,5 +546,39 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->register_recordtype('shite', ['name' => 'string']);
         $this->mu->deregister_recordtype('shite');
     }
+
+    public function test_mu_accepts_empty_search_parameters_for_find()
+    {
+        $results = $this->mu->find('article');
+        // we're going to use our validation code to ensure the store is sending back a record.
+        $this->assertEquals('', $this->mu->test_record_validation($results[1]));
+    }
+
+    public function test_mu_accepts_searches_for_deregistered_record_types()
+    {
+        $this->mu->deregister_recordtype('article');
+        $results = $this->mu->find('article');
+        // we're going to use our validation code to ensure the store is sending back a record.
+        $this->assertEquals('', $this->mu->test_record_validation($results[1]));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Invalid record type. Expected string, received integer.
+     */
+    public function test_mu_rejects_invalid_record_type_for_find()
+    {
+        $this->mu->find(1);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Record type shisticle does not exist.
+     */
+    public function test_mu_rejects_non_existent_record_type_for_find()
+    {
+        $this->mu->find('shisticle');
+    }
+
 
 }

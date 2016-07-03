@@ -225,6 +225,7 @@ class Mu
     public function deregister_recordtype($recordtype)
     {
         if (array_key_exists($recordtype, $this->recordtypes)) {
+            $this->deregistered_recordtypes[$recordtype] = $this->recordtypes[$recordtype];
             $this->store->deregister_recordtype($recordtype);
             unset($this->recordtypes[$recordtype]);
             return true;
@@ -316,8 +317,11 @@ class Mu
     /**
      * Returns all entries of the given $record_type. See \fijma\Mu\Store for documentation.
      */
-    public function find($record_type, $params = [])
+    public function find($record_type, Array $params = [])
     {
+        $errors = $this->validate_find_parameters($record_type, $params);
+        if ($errors) throw new \Exception($errors);
+        return $this->store->find($record_type, $params);
 
     }
 
@@ -351,7 +355,7 @@ class Mu
         // 1. Similarly, if we can't find the record type, bomb out.
         if(array_key_exists($record_type, $this->recordtypes)) {
             $record_type_definition = $this->recordtypes[$record_type];
-        } elseif(array_key_exists($record_type, $this->deregistered_fieldtypes)) {
+        } elseif(array_key_exists($record_type, $this->deregistered_recordtypes)) {
             $record_type_definition = $this->deregistered_recordtypes[$record_type];
         } else {
             return 'Record type ' . $record_type . ' does not exist.';
@@ -419,6 +423,8 @@ class Mu
             return '';
         } else {
             // make the return string here.
+            $errmsg = "Received invalid search parameters:";
+            return $errmsg . implode("\n", $errors);
         }
 
     }

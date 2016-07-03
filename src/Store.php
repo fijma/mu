@@ -136,7 +136,7 @@ interface Store
      *     - offset: defines the number of results to be skipped.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */
-    public function find($record_type, $params = []);
+    public function find($record_type, Array $params = []);
 
     /**
      * Returns all records which share a relationship with the record defined by $record_id.
@@ -147,7 +147,7 @@ interface Store
      *     - filter: array of [field => criteria] tuples to filter the results by. Only valid if record_type has been specified.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */
-    public function related($record_id, $params = []);
+    public function related($record_id, Array $params = []);
 
     /**
      * Returns the version history for the given record.

@@ -127,12 +127,18 @@ class MockStore implements Store
 
     }
 
-    public function find($record_type, $params = [])
+    public function find($record_type, Array $params = [])
     {
+        return [1 => [     'id' => 1,
+                         'type' => 'article',
+                      'version' => 'v1',
+                      'deleted' => false,
+                         'data' => []]
+                ];
 
     }
 
-    public function related($record_id, $params = [])
+    public function related($record_id, Array $params = [])
     {
 
     }
