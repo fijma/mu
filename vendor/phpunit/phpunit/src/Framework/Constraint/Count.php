@@ -7,11 +7,16 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+namespace PHPUnit\Framework\Constraint;
+
+use Countable;
+use IteratorAggregate;
+use Traversable;
+use Generator;
 
 /**
- * @since Class available since Release 3.6.0
  */
-class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
+class Count extends Constraint
 {
     /**
      * @var int
@@ -56,11 +61,15 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
                 $iterator = $other;
             }
 
+            if ($iterator instanceof Generator) {
+                return $this->getCountOfGenerator($iterator);
+            }
+
             $key   = $iterator->key();
             $count = iterator_count($iterator);
 
-            // manually rewind $iterator to previous key, since iterator_count
-            // moves pointer
+            // Manually rewind $iterator to previous key, since iterator_count
+            // moves pointer.
             if ($key !== null) {
                 $iterator->rewind();
                 while ($iterator->valid() && $key !== $iterator->key()) {
@@ -73,7 +82,24 @@ class PHPUnit_Framework_Constraint_Count extends PHPUnit_Framework_Constraint
     }
 
     /**
-     * Returns the description of the failure
+     * Returns the total number of iterations from a generator.
+     * This will fully exhaust the generator.
+     *
+     * @param Generator $generator
+     *
+     * @return int
+     */
+    protected function getCountOfGenerator(Generator $generator)
+    {
+        for ($count = 0; $generator->valid(); $generator->next()) {
+            $count += 1;
+        }
+
+        return $count;
+    }
+
+    /**
+     * Returns the description of the failure.
      *
      * The beginning of failure messages is "Failed asserting that" in most
      * cases. This method should return the second part of that sentence.

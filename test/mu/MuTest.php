@@ -228,7 +228,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_does_nothing_if_it_cant_find_the_relationship_to_remove()
     {
-        $this->mu->unrelate('link', 1, 2);
+        $this->assertNull($this->mu->unrelate('link', 1, 2));
     }
 
     public function test_mu_reports_its_version()

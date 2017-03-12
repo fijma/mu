@@ -16,7 +16,9 @@
  * assertObjectEquality($expected, $actual) asserts the equality of object instances.
  */
 
-abstract class MuPHPUnitExtensions extends PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+abstract class MuPHPUnitExtensions extends PHPUnit\Framework\TestCase {
 
     /**
      * Asserts equality of object instances
@@ -31,7 +33,7 @@ abstract class MuPHPUnitExtensions extends PHPUnit_Framework_TestCase {
 
 }
 
-class MuConstraintIdenticality extends PHPUnit_Framework_Constraint {
+class MuConstraintIdenticality extends PHPUnit\Framework\Constraint\Constraint {
     
     private $expected;
 
