@@ -39,7 +39,7 @@ class Mu
     }
 
     // Creates a new record (after validating the data). See \fijma\Mu\Store for documentation.
-    public function create($type, Array $data)
+    public function create($type, array $data)
     {
         $errors = $this->validate($type, $data);
         if($errors) throw new \Exception($errors);
@@ -53,7 +53,7 @@ class Mu
     }
 
     // Deletes the given record. See \fijma\Mu\Store for documentation.
-    public function delete(Array $record)
+    public function delete(array $record)
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -61,7 +61,7 @@ class Mu
     }
 
     // Undeletes the given record. See \fijma\Mu\Store for documentation.
-    public function undelete(Array $record)
+    public function undelete(array $record)
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -69,7 +69,7 @@ class Mu
     }
 
     // Updates the given record (after validating the data). See \fijma\Mu\Store for documentation.
-    public function update(Array $record)
+    public function update(array $record)
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -115,12 +115,8 @@ class Mu
     }
 
     // Registers a new fieldtype.
-    public function register_fieldtype($fieldtype, $implementing_class)
+    public function register_fieldtype(string $fieldtype, string $implementing_class)
     {
-        if (!is_string($fieldtype)) {
-            throw new \Exception('Fieldtype name must be a string.');
-        }
-
         if(in_array($fieldtype, $this->fieldtypes())) {
             throw new \Exception('Fieldtype ' . $fieldtype . ' is already registered.');
         }
@@ -165,12 +161,8 @@ class Mu
     // Registers a new recordtype.
     // Note that we accept a shorthand method of defining a field by the fieldtype alone if
     // it is mandatory. Otherwise, we need to supply the definition as an array.
-    public function register_recordtype($recordtype, Array $fieldtypes)
+    public function register_recordtype(string $recordtype, array $fieldtypes)
     {
-        if(!is_string($recordtype)) {
-            throw new \Exception('Recordtype name must be a string.');
-        }
-
         if(array_key_exists($recordtype, $this->recordtypes)) {
             throw new \Exception('Recordtype ' . $recordtype . ' is already registered.');
         }
@@ -236,7 +228,7 @@ class Mu
 
     // Validates a record (ie as defined in \fijma\Mu\Store, and *not* the data itself).
     // Returns a message detailing the errors (empty string on success).
-    protected function validate_record($record)
+    protected function validate_record(array $record)
     {
         $keys = ['id', 'type', 'version', 'deleted', 'data'];
 
@@ -279,7 +271,7 @@ class Mu
 
     // Validates a data array against the recordtype.
     // Returns a message detailing the errors (empty string on success).
-    protected function validate($recordtype, Array $data)
+    protected function validate($recordtype, array $data)
     {
         $definition = $this->recordtypes[$recordtype];
         
@@ -317,7 +309,7 @@ class Mu
     /**
      * Returns all entries of the given $record_type. See \fijma\Mu\Store for documentation.
      */
-    public function find($record_type, Array $params = [])
+    public function find(string $record_type, array $params = [])
     {
         $errors = $this->validate_find_parameters($record_type, $params);
         if ($errors) throw new \Exception($errors);
@@ -342,16 +334,12 @@ class Mu
      *                 4.1.2.3. If order or deleted, each value in the array is a boolen
      *         4.2. If limit or offset, confirm the value is an integer
      */
-    protected function validate_find_parameters($record_type, Array $params)
+    protected function validate_find_parameters(string $record_type, array $params)
     {
         $errors = [];
         $record_type_definition = [];
 
-        // 0. If it's not a string, we really can't go any further.
-        if (!is_string($record_type)) {
-            return 'Invalid record type. Expected string, received ' . gettype($record_type) . '.';
-        }
-
+        // 0. If it's not a string, we haven't even started because of the type declaration.
         // 1. Similarly, if we can't find the record type, bomb out.
         if(array_key_exists($record_type, $this->recordtypes)) {
             $record_type_definition = $this->recordtypes[$record_type];
@@ -361,7 +349,7 @@ class Mu
             return 'Record type ' . $record_type . ' does not exist.';
         }
 
-        // 2. If it's not an array, we haven't even started because of the type hint.
+        // 2. If it's not an array, we haven't even started because of the type declaration.
         // 3. First, if empty we're good to go.
         if (empty($params)) {
             return '';

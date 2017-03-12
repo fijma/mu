@@ -2,11 +2,11 @@
 
 use \fijma\Mu\Mu;
 use \fijma\Mu\Store;
-use \fijma\Mu\Boolean;
-use \fijma\Mu\DateTime;
-use \fijma\Mu\Float;
-use \fijma\Mu\Integer;
-use \fijma\Mu\String;
+use \fijma\Mu\MockBoolean;
+use \fijma\Mu\MockDateTime;
+use \fijma\Mu\MockFloat;
+use \fijma\Mu\MockInteger;
+use \fijma\Mu\MockString;
 
 
 class MuTest extends MuPHPUnitExtensions
@@ -281,15 +281,6 @@ class MuTest extends MuPHPUnitExtensions
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Fieldtype name must be a string.
-     */
-    public function test_mu_throws_an_exception_if_fieldtype_name_is_not_a_string()
-    {
-        $this->mu->register_fieldtype(1, '\fijma\Mu\MockBoolean');
-    }
-
-    /**
-     * @expectedException Exception
      * @expectedExceptionMessage Fieldtype implementing class 'hello' does not exist.
      */
     public function test_mu_throws_an_exception_if_implementing_fieldtype_class_does_not_exist()
@@ -368,15 +359,6 @@ class MuTest extends MuPHPUnitExtensions
     public function test_mu_throws_an_exception_when_registering_a_recordtype_which_has_an_unregistered_fieldtype()
     {
         $this->mu->register_recordtype('text', ['content' => 'text']);
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Recordtype name must be a string.
-     */
-    public function test_mu_throws_an_exception_if_recordtype_name_is_not_a_string()
-    {
-        $this->mu->register_recordtype(1, ['name' => 'string']);
     }
 
     /**
@@ -560,15 +542,6 @@ class MuTest extends MuPHPUnitExtensions
         $results = $this->mu->find('article');
         // we're going to use our validation code to ensure the store is sending back a record.
         $this->assertEquals('', $this->mu->test_record_validation($results[1]));
-    }
-
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Invalid record type. Expected string, received integer.
-     */
-    public function test_mu_rejects_invalid_record_type_for_find()
-    {
-        $this->mu->find(1);
     }
 
     /**
