@@ -563,5 +563,23 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->find('shisticle');
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Received invalid option (shits).
+     */
+     public function test_mu_complains_about_a_single_invalid_find_parameter()
+     {
+         $this->mu->find('article', ['shits' => 0]);
+     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Received invalid options (shits, giggles).
+     */
+     public function test_mu_complains_about_multiple_invalid_find_parameters()
+     {
+         $this->mu->find('article', ['shits' => 0, 'giggles' => 1]);
+     }
 }

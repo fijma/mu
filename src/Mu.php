@@ -356,12 +356,12 @@ class Mu
         // 4. Otherwise, check that our keys are good.
         } else {
             $expected_keys = ['deleted', 'filter', 'limit', 'offset', 'order'];
-            $diff = array_diff($expected_keys, array_keys($params));
+            $diff = array_diff(array_keys($params), $expected_keys);
             if (!empty($diff)) {
-                $s = 'Invalid parameter';
-                $s .= count($diff) > 1 ? 's: ' : ': ';
+                $s = 'Received invalid option';
+                $s .= count($diff) > 1 ? 's (' : ' (';
                 $s .= implode(', ', $diff);
-                $s .= '.';
+                $s .= ').';
                 $errors[] = $s;
             }
         }
@@ -399,20 +399,17 @@ class Mu
                             }
                         }
                     }
-                    // @codeCoverageIgnoreStart
-                     default:
-                    // This should be unreachable
-                    $errors[] = 'Invalid parameter: ' . $key . '.';
                     break;
-                    // @codeCoverageIgnoreEnd
+                default:
+                    //do nothing, we've caught this already
             }
         }
         if(empty($errors)) {
             return '';
         } else {
             // make the return string here.
-            $errmsg = "Received invalid search parameters:";
-            return $errmsg . implode("\n", $errors);
+            $errmsg = "Received invalid search parameters: ";
+            return $errmsg . implode("\n - ", $errors);
         }
 
     }
