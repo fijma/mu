@@ -14,7 +14,7 @@ interface FieldType
     /**
      * Returns a string for creating an item of this type in the underlying repository.
      */
-    public function create($label);
+    public function create(string $label): string;
 
 
     /**
@@ -28,7 +28,7 @@ interface FieldType
      * Returns a boolean indicating whether $value meets the definition of the FieldType.
      * If the $optional flag is true, validate must return true if the value is an appropriate null value for the field type.
      */
-    public function validate($value, $optional = false);
+    public function validate($value, $optional = false): bool;
 
     
     /**

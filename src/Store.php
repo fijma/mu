@@ -30,7 +30,7 @@ interface Store
      * Creates a new record of given type with given data and returns a record array.
      * This function must throw an Exception on failure.
      */
-    public function create($type, Array $data);
+    public function create(string $type, array $data): array;
 
     /**
      * Returns the record for the given id, or null if id not found.
@@ -46,7 +46,7 @@ interface Store
      * This function must throw an Exception on failure.
      * (You should probably just use the update function to do this.)
      */
-    public function delete(Array $record);
+    public function delete(array $record): array;
 
     /**
      * Removes the delete flag for the given record.
@@ -54,21 +54,22 @@ interface Store
      * This function must throw an Exception on failure.
      * (You should probably just use the update function to do this.)
      */
-    public function undelete(Array $record);
+    public function undelete(array $record): array;
 
     /**
      * Performs a version check against the repository, saves the record,
      * and returns the updated record array.
      * This function must throw an Exception on failure.
      */
-    public function update(Array $record);
+    public function update(array $record): array;
 
     /**
      * Creates a relationship of the given type between two records.
      * This function must throw an Exception on failure.
      * Note $from and $to represent the record ids, not the records themselves.
+     * Returns true if the relationship is created, false if the relationship already existed.
      */
-    public function relate($relationship_type, $from, $to);
+    public function relate(string $relationship_type, $from, $to): bool;
 
     /**
      * Removes the given relationship.
@@ -76,24 +77,25 @@ interface Store
      * This function must throw an exception if the defined relationship does exist
      * but is not able to be deleted.
      * Note $from and $to represent the record ids, not the records themselves.
+     * Returns true if the relationship is removed, false if the relationship never existed.
      */
-    public function unrelate($relationship_type, $from, $to);
+    public function unrelate(string $relationship_type, $from, $to): bool;
 
     /**
      * Returns an array of the field types registered in this store.
      */
-    public function fieldtypes();
+    public function fieldtypes(): array;
 
     /**
      * Returns an array of the deregistered field types in this store.
      */
-    public function deregistered_fieldtypes();
+    public function deregistered_fieldtypes(): array;
 
     /**
      * Adds a fieldtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    public function register_fieldtype($fieldtype, $implementing_class);
+    public function register_fieldtype(string $fieldtype, string $implementing_class);
 
     /**
     * Removes a fieldtype definition from the store's registry.
@@ -101,23 +103,23 @@ interface Store
     * Deregistration should not prevent a record using the fieldtype from being retrieved.
     * It should prevent all other actions for a record using that fieldtype.
     */
-    public function deregister_fieldtype($fieldtype);
+    public function deregister_fieldtype(string $fieldtype);
     
     /**
      * Returns an array of the record types registered in this store.
      */
-    public function recordtypes();
+    public function recordtypes(): array;
 
     /**
      * Returns an array of the deregistered record types in this store.
      */
-    public function deregistered_recordtypes();
+    public function deregistered_recordtypes(): array;
 
     /**
      * Adds a recordtype definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    public function register_recordtype($recordtype, Array $fieldtypes);
+    public function register_recordtype(string $recordtype, Array $fieldtypes);
 
     /**
      * Removes a recordtype defintion from the store's registry.
@@ -125,7 +127,7 @@ interface Store
      * Deregistration should not prevent a record of the deregistered recordtype from being retrieved.
      * It should prevent all other actions for a record of that recordtype.
      */
-    public function deregister_recordtype($recordtype);
+    public function deregister_recordtype(string $recordtype);
 
     /**
      * Returns all entries of the given $record_type.
@@ -136,7 +138,7 @@ interface Store
      *     - offset: defines the number of results to be skipped.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */
-    public function find($record_type, Array $params = []);
+    public function find(string $record_type, array $params = []): array;
 
     /**
      * Returns all records which share a relationship with the record defined by $record_id.
@@ -147,11 +149,11 @@ interface Store
      *     - filter: array of [field => criteria] tuples to filter the results by. Only valid if record_type has been specified.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
      */
-    public function related($record_id, Array $params = []);
+    public function related($record_id, array $params = []): array;
 
     /**
      * Returns the version history for the given record.
      * This function has no parameters.
      */
-    public function versions($record_id);
+    public function versions($record_id): array;
 }

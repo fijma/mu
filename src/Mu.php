@@ -33,13 +33,13 @@ class Mu
         $this->load_recordtypes();
     }
 
-    public function version()
+    public function version(): string
     {
         return $this->version;
     }
 
     // Creates a new record (after validating the data). See \fijma\Mu\Store for documentation.
-    public function create($type, array $data)
+    public function create(string $type, array $data): array
     {
         $errors = $this->validate($type, $data);
         if($errors) throw new \Exception($errors);
@@ -47,13 +47,13 @@ class Mu
     }
 
     // Returns the record for the given id. See \fijma\Mu\Store for documentation.
-    public function get($id)
+    public function get($id): array
     {
         return $this->store->get($id);
     }
 
     // Deletes the given record. See \fijma\Mu\Store for documentation.
-    public function delete(array $record)
+    public function delete(array $record): array
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -61,7 +61,7 @@ class Mu
     }
 
     // Undeletes the given record. See \fijma\Mu\Store for documentation.
-    public function undelete(array $record)
+    public function undelete(array $record): array
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -69,7 +69,7 @@ class Mu
     }
 
     // Updates the given record (after validating the data). See \fijma\Mu\Store for documentation.
-    public function update(array $record)
+    public function update(array $record): array
     {
         $errors = $this->validate_record($record);
         if($errors) throw new \Exception($errors);
@@ -81,15 +81,15 @@ class Mu
     }
 
     // Creates a relationship between two records. See \fijma\Mu\Store for documentation.
-    public function relate($relationship_type, $from, $to)
+    public function relate(string $relationship_type, $from, $to): bool
     {
-        $this->store->relate($relationship_type, $from, $to);
+        return $this->store->relate($relationship_type, $from, $to);
     }
 
     // Removes a relationship between two records. See \fijma\Mu\Store for documentation.
-    public function unrelate($relationship_type, $from, $to)
+    public function unrelate(string $relationship_type, $from, $to): bool
     {
-        $this->store->unrelate($relationship_type, $from, $to);
+        return $this->store->unrelate($relationship_type, $from, $to);
     }
 
     // Instantiates the field type objects into the fieldtypes array.
@@ -109,7 +109,7 @@ class Mu
     }
 
     // Reports the supported fieldtypes.
-    public function fieldtypes()
+    public function fieldtypes(): array
     {
         return array_keys($this->fieldtypes);
     }
@@ -134,7 +134,7 @@ class Mu
     }
 
     // Deregisters a fieldtype. Returns true on success, false if the fieldtype was not registerd.
-    public function deregister_fieldtype($fieldtype)
+    public function deregister_fieldtype(string $fieldtype)
     {
         if (array_key_exists($fieldtype, $this->fieldtypes)) {
             $this->store->deregister_fieldtype($fieldtype);
@@ -153,7 +153,7 @@ class Mu
     }
 
     // Reports the supported record types.
-    public function recordtypes()
+    public function recordtypes(): array
     {
         return array_keys($this->recordtypes);
     }
@@ -214,7 +214,7 @@ class Mu
     }
 
     // Deregisters a recordtype. Returns true on success, false if the recordtype was not registerd.
-    public function deregister_recordtype($recordtype)
+    public function deregister_recordtype(string $recordtype)
     {
         if (array_key_exists($recordtype, $this->recordtypes)) {
             $this->deregistered_recordtypes[$recordtype] = $this->recordtypes[$recordtype];
@@ -228,7 +228,7 @@ class Mu
 
     // Validates a record (ie as defined in \fijma\Mu\Store, and *not* the data itself).
     // Returns a message detailing the errors (empty string on success).
-    protected function validate_record(array $record)
+    protected function validate_record(array $record): string
     {
         $keys = ['id', 'type', 'version', 'deleted', 'data'];
 
@@ -271,7 +271,7 @@ class Mu
 
     // Validates a data array against the recordtype.
     // Returns a message detailing the errors (empty string on success).
-    protected function validate($recordtype, array $data)
+    protected function validate(string $recordtype, array $data): string
     {
         $definition = $this->recordtypes[$recordtype];
         
@@ -309,7 +309,7 @@ class Mu
     /**
      * Returns all entries of the given $record_type. See \fijma\Mu\Store for documentation.
      */
-    public function find(string $record_type, array $params = [])
+    public function find(string $record_type, array $params = []): array
     {
         $errors = $this->validate_find_parameters($record_type, $params);
         if ($errors) throw new \Exception($errors);
@@ -334,7 +334,7 @@ class Mu
      *                 4.1.2.3. If order or deleted, each value in the array is a boolen
      *         4.2. If limit or offset, confirm the value is an integer
      */
-    protected function validate_find_parameters(string $record_type, array $params)
+    protected function validate_find_parameters(string $record_type, array $params): string
     {
         $errors = [];
         $record_type_definition = [];
@@ -421,7 +421,7 @@ class Mu
      * Returns all records which share a relationship with the record defined by $record_id.
      * See \fijma\Mu\Store for documentation.
      */
-    public function related($record_id, $params = [])
+    public function related($record_id, array $params = []): array
     {
 
     }
@@ -429,7 +429,7 @@ class Mu
     /**
      * Returns the version history for the given record.
      */
-    public function versions($record_id)
+    public function versions($record_id): array
     {
         
     }

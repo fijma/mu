@@ -88,9 +88,9 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals("G'day cobber.", $record['data']['message']);
     }
 
-    public function test_mu_returns_null_when_record_doesnt_exist()
+    public function test_mu_returns_empty_array_when_record_doesnt_exist()
     {
-        $this->assertNull($this->mu->get(0));
+        $this->assertEmpty($this->mu->get(0));
     }
 
     public function test_mu_deletes_a_record()
@@ -182,8 +182,18 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->register_recordtype('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
-        $this->mu->relate('link', $record_one['id'], $record_two['id']);
+        $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
         $this->assertEquals($this->store->show_relationships(), [['link', 1, 2]]);
+    }
+
+    public function test_mu_returns_false_if_you_relate_already_related_records()
+    {
+        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
+        $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
+        $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
+        $this->assertEquals($this->store->show_relationships(), [['link', 1, 2]]);
+        $this->assertFalse($this->mu->relate('link', $record_one['id'], $record_two['id']));
     }
 
     /**
@@ -206,12 +216,12 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->relate('link', 1, 2);
     }
 
-    public function test_mu_removes_relationships()
+    public function test_mu_removes_relationships_and_returns_true_when_it_does_so()
     {
         $this->mu->register_recordtype('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
-        $this->mu->relate('link', $record_one['id'], $record_two['id']);
+        $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
         $this->assertEquals($this->store->show_relationships(), [['link', 1, 2]]);
         $this->mu->unrelate('link', $record_one['id'], $record_two['id']);
         $this->assertEmpty($this->store->show_relationships());
@@ -226,9 +236,9 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->unrelate('ExceptionTest', 1, 2);
     }
 
-    public function test_mu_does_nothing_if_it_cant_find_the_relationship_to_remove()
+    public function test_mu_returns_false_if_it_cant_find_the_relationship_to_remove()
     {
-        $this->assertNull($this->mu->unrelate('link', 1, 2));
+        $this->assertFalse($this->mu->unrelate('link', 1, 2));
     }
 
     public function test_mu_reports_its_version()
