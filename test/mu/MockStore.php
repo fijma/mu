@@ -38,9 +38,9 @@ class MockStore implements Store
         return $this->store[$id];
     }
 
-    public function get($id): array
+    public function get($id)
     {
-        return array_key_exists($id, $this->store) ? $this->store[$id] : [];
+        return array_key_exists($id, $this->store) ? $this->store[$id] : null;
     }
 
 
@@ -101,21 +101,21 @@ class MockStore implements Store
         }
     }
 
-    public function fieldtypes(): array
+    public function field_types(): array
     {
         return ['boolean' => '\fijma\Mu\MockBoolean',
                 'float' => '\fijma\Mu\MockFloat',
                 'string' => '\fijma\Mu\MockString'];
     }
 
-    public function register_fieldtype(string $fieldtype, string $implementing_class)
+    public function register_field_type(string $field_type, string $implementing_class)
     {
-        if($fieldtype === 'bugger') {
-            throw new \Exception('Failed to register fieldtype ' . $fieldtype . '.');
+        if($field_type === 'bugger') {
+            throw new \Exception('Failed to register field_type ' . $field_type . '.');
         }
     }
 
-    public function recordtypes(): array
+    public function record_types(): array
     {
         return ['article' => ['title' => ['string', false],
                               'publishdate' => ['datetime', false],
@@ -123,10 +123,10 @@ class MockStore implements Store
                               'article' => ['string', false]]];
     }
 
-    public function register_recordtype(string $recordtype, array $fieldtypes)
+    public function register_record_type(string $record_type, array $field_types)
     {
-        if($recordtype === 'bugger') {
-            throw new \Exception('Failed to register recordtype ' . $recordtype . '.');
+        if($record_type === 'bugger') {
+            throw new \Exception('Failed to register record_type ' . $record_type . '.');
         }
 
     }
@@ -152,27 +152,27 @@ class MockStore implements Store
         
     }
 
-    public function deregister_fieldtype(string $fieldtype)
+    public function deregister_field_type(string $field_type)
     {
-        if($fieldtype === 'shite') {
+        if($field_type === 'shite') {
             throw new Exception();
         }
     }
 
-    public function deregister_recordtype(string $recordtype)
+    public function deregister_record_type(string $record_type)
     {
-        if($recordtype === 'shite') {
+        if($record_type === 'shite') {
             throw new Exception();
         }
     }
 
-    public function deregistered_fieldtypes(): array
+    public function deregistered_field_types(): array
     {
         return ['integer' => '\fijma\Mu\MockInteger'];
 
     }
 
-    public function deregistered_recordtypes(): array
+    public function deregistered_record_types(): array
     {
         return ['listicle' => ['title' => ['string', false],
                               'publishdate' => ['datetime', false],

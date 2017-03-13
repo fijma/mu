@@ -36,7 +36,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_creates_a_new_record()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $record = $this->mu->create('record', $data);
         $this->assertInternalType('array', $record);
@@ -61,14 +61,14 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_throws_an_exception_when_create_fails()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => 'string', 'exception' => 'Failed to create new record.'];
         $this->mu->create('record', $data);
     }
 
     public function test_mu_gets_a_record()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $this->mu->create('record', $data);
         $record = $this->mu->get(1);
@@ -88,14 +88,14 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals("G'day cobber.", $record['data']['message']);
     }
 
-    public function test_mu_returns_empty_array_when_record_doesnt_exist()
+    public function test_mu_returns_null_when_record_doesnt_exist()
     {
-        $this->assertEmpty($this->mu->get(0));
+        $this->assertNull($this->mu->get(0));
     }
 
     public function test_mu_deletes_a_record()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $record = $this->mu->create('record', $data);
         $version_before = $record['version'];
@@ -120,7 +120,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_undeletes_a_record()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber."];
         $record = $this->mu->create('record', $data);
         $this->assertArrayHasKey('deleted', $record);
@@ -148,7 +148,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_updates_a_record()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $data = ['message' => "G'day cobber!"];
         $record = $this->mu->create('record', $data);
         $record_id = $record['id'];
@@ -169,7 +169,7 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_checks_versions()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->get(1);
         $record_one['data']['message'] = "How're they hangin'?";
@@ -179,7 +179,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_relates_records()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
         $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
@@ -188,7 +188,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_false_if_you_relate_already_related_records()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
         $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
@@ -211,14 +211,14 @@ class MuTest extends MuPHPUnitExtensions
      */
     public function test_mu_relate_throws_an_exception_if_the_to_record_does_not_exist()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $this->mu->create('record', ['message' => "G'day cobber!"]);
         $this->mu->relate('link', 1, 2);
     }
 
     public function test_mu_removes_relationships_and_returns_true_when_it_does_so()
     {
-        $this->mu->register_recordtype('record', ['message' => 'string']);
+        $this->mu->register_record_type('record', ['message' => 'string']);
         $record_one = $this->mu->create('record', ['message' => "G'day cobber!"]);
         $record_two = $this->mu->create('record', ['message' => "How're they hangin'?"]);
         $this->assertTrue($this->mu->relate('link', $record_one['id'], $record_two['id']));
@@ -246,26 +246,26 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals('0.9.0', $this->mu->version());
     }
 
-    public function test_mu_reports_the_fieldtypes_it_supports()
+    public function test_mu_reports_the_field_types_it_supports()
     {
         $expected = ['boolean', 'float', 'string'];
-        $this->assertEquals($expected, $this->mu->fieldtypes());
+        $this->assertEquals($expected, $this->mu->field_types());
     }
 
-    public function test_mu_loads_deregistered_fieldtypes()
+    public function test_mu_loads_deregistered_field_types()
     {
         $expected = ['integer'];
-        $df = $this->mu->show_me_your_deregistered_fieldtypes();
+        $df = $this->mu->show_me_your_deregistered_field_types();
         $actual = array_keys($df);
         $this->assertEquals($expected, $actual);
         $this->assertInstanceOf('\fijma\Mu\MockInteger', $df['integer']);
     }
 
-    public function test_mu_can_register_fieldtypes()
+    public function test_mu_can_register_field_types()
     {
         $expected = ['boolean', 'datetime', 'float', 'string'];
-        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
-        $actual = $this->mu->fieldtypes();
+        $this->mu->register_field_type('datetime', '\fijma\Mu\MockDateTime');
+        $actual = $this->mu->field_types();
         sort($actual);
         sort($expected);
         $this->assertEquals($expected, $actual);
@@ -273,43 +273,43 @@ class MuTest extends MuPHPUnitExtensions
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Failed to register fieldtype bugger.
+     * @expectedExceptionMessage Failed to register field_type bugger.
      */
-    public function test_mu_gets_an_exception_when_registering_a_fieldtype_fails()
+    public function test_mu_gets_an_exception_when_registering_a_field_type_fails()
     {
-        $this->mu->register_fieldtype('bugger', '\fijma\Mu\MockBoolean');
+        $this->mu->register_field_type('bugger', '\fijma\Mu\MockBoolean');
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Fieldtype boolean is already registered.
      */
-    public function test_mu_throws_an_exception_when_registering_an_existing_fieldtype()
+    public function test_mu_throws_an_exception_when_registering_an_existing_field_type()
     {
-        $this->mu->register_fieldtype('boolean', '\fijma\Mu\MockBoolean');
+        $this->mu->register_field_type('boolean', '\fijma\Mu\MockBoolean');
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Fieldtype implementing class 'hello' does not exist.
      */
-    public function test_mu_throws_an_exception_if_implementing_fieldtype_class_does_not_exist()
+    public function test_mu_throws_an_exception_if_implementing_field_type_class_does_not_exist()
     {
-        $this->mu->register_fieldtype('hello', 'hello');
+        $this->mu->register_field_type('hello', 'hello');
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Fieldtype implementing class must implement the \fijma\Mu\FieldType interface.
      */
-    public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_fieldtype_interface()
+    public function test_mu_throws_an_exception_if_implementing_class_does_not_implement_field_type_interface()
     {
-        $this->mu->register_fieldtype('hello', 'MockStore');
+        $this->mu->register_field_type('hello', 'MockStore');
     }
 
     public function test_mu_returns_an_error_string_for_one_invalid_data_field()
     {
-        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
+        $this->mu->register_field_type('datetime', '\fijma\Mu\MockDateTime');
         $expected = 'Received invalid data for the following field: publishdate(que).';
         $actual = $this->mu->test_validation('article', ['title' => 'test', 'publishdate' => 'que', 'summary' => 'test', 'article' => 'test']);
         $this->assertEquals($expected, $actual);
@@ -317,76 +317,76 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_multiple_invalid_data_fields()
     {
-        $this->mu->register_fieldtype('datetime', '\fijma\Mu\MockDateTime');
+        $this->mu->register_field_type('datetime', '\fijma\Mu\MockDateTime');
         $expected = 'Received invalid data for the following fields: title(1), publishdate(que), summary(1), article().';
         $actual = $this->mu->test_validation('article', ['title' => 1, 'publishdate' => 'que', 'summary' => true, 'article' => null]);
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_mu_reports_the_recordtypes_it_supports()
+    public function test_mu_reports_the_record_types_it_supports()
     {
-        $this->assertEquals(['article'], $this->mu->recordtypes());
+        $this->assertEquals(['article'], $this->mu->record_types());
     }
 
-    public function test_mu_loads_deregistered_recordtypes()
+    public function test_mu_loads_deregistered_record_types()
     {
         $expected = ['listicle' => ['title' => ['string', false],
                               'publishdate' => ['datetime', false],
                               'summary' => ['string', false],
                               'article' => ['string', false]]];
-        $actual = $this->mu->show_me_your_deregistered_recordtypes();
+        $actual = $this->mu->show_me_your_deregistered_record_types();
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_mu_can_register_recordtypes()
+    public function test_mu_can_register_record_types()
     {
-        $this->mu->register_recordtype('author', ['name' => 'string', 'email' => 'string']);
-        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
+        $this->mu->register_record_type('author', ['name' => 'string', 'email' => 'string']);
+        $this->assertEquals(['article', 'author'], $this->mu->record_types());
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage Failed to register recordtype bugger.
+     * @expectedExceptionMessage Failed to register record_type bugger.
      */
-    public function test_mu_gets_an_exception_when_registering_a_recordtype_fails()
+    public function test_mu_gets_an_exception_when_registering_a_record_type_fails()
     {
-        $this->mu->register_recordtype('bugger', ['name' => 'string']);
+        $this->mu->register_record_type('bugger', ['name' => 'string']);
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Recordtype article is already registered.
      */
-    public function test_mu_throws_an_exception_when_registering_an_existing_recordtype()
+    public function test_mu_throws_an_exception_when_registering_an_existing_record_type()
     {
-        $this->mu->register_recordtype('article', ['name' => 'string']);
+        $this->mu->register_record_type('article', ['name' => 'string']);
     }
 
     /**
      * @expectedException Exception
-     * @expectedExceptionMessage The following fieldtype is not registered: text.
+     * @expectedExceptionMessage The following field_type is not registered: text.
      */
-    public function test_mu_throws_an_exception_when_registering_a_recordtype_which_has_an_unregistered_fieldtype()
+    public function test_mu_throws_an_exception_when_registering_a_record_type_which_has_an_unregistered_field_type()
     {
-        $this->mu->register_recordtype('text', ['content' => 'text']);
+        $this->mu->register_record_type('text', ['content' => 'text']);
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Fieldtype array cannot be empty.
      */
-    public function test_mu_throw_an_exception_if_fieldtype_is_an_empty_array()
+    public function test_mu_throw_an_exception_if_field_type_is_an_empty_array()
     {
-        $this->mu->register_recordtype('test', []);
+        $this->mu->register_record_type('test', []);
     }
 
     /**
     * @expectedException Exception
-    * @expectedExceptionMessage The following fieldtype is not registered: blah.
+    * @expectedExceptionMessage The following field_type is not registered: blah.
     */
-    public function test_mu_throws_an_exception_when_a_fieldtype_is_not_registered()
+    public function test_mu_throws_an_exception_when_a_field_type_is_not_registered()
     {
-        $this->mu->register_recordtype('test', ['blah' => 'blah']);
+        $this->mu->register_record_type('test', ['blah' => 'blah']);
     }
 
     /**
@@ -395,58 +395,58 @@ class MuTest extends MuPHPUnitExtensions
     */
     public function test_mu_throws_an_exception_if_field_names_are_not_strings()
     {
-        $this->mu->register_recordtype('test', [1 => 'string']);
+        $this->mu->register_record_type('test', [1 => 'string']);
     }
 
     /**
     * @expectedException Exception
-    * @expectedExceptionMessage The following fieldtypes are not registered: bleep, bloop.
+    * @expectedExceptionMessage The following field_types are not registered: bleep, bloop.
     */
-    public function test_mu_throws_an_exception_when_multiple_fieldtypes_are_not_registered()
+    public function test_mu_throws_an_exception_when_multiple_field_types_are_not_registered()
     {
-        $this->mu->register_recordtype('test', ['blip' => 'bleep', 'blup' => 'bloop']);
+        $this->mu->register_record_type('test', ['blip' => 'bleep', 'blup' => 'bloop']);
     }
 
     /**
     * @expectedException Exception
-    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    * @expectedExceptionMessage Received invalid field_type definition array.
     */
-    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_0()
+    public function test_mu_throws_an_exception_when_invalid_field_type_in_record_type_0()
     {
-        $this->mu->register_recordtype('test', ['name' => ['invalid_array']]);
+        $this->mu->register_record_type('test', ['name' => ['invalid_array']]);
     }
 
     /**
     * @expectedException Exception
-    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    * @expectedExceptionMessage Received invalid field_type definition array.
     */
-    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_1()
+    public function test_mu_throws_an_exception_when_invalid_field_type_in_record_type_1()
     {
-        $this->mu->register_recordtype('test', ['name' => [1, false]]);
+        $this->mu->register_record_type('test', ['name' => [1, false]]);
     }
 
     /**
     * @expectedException Exception
     * @expectedExceptionMessage Optional flag must be a boolean.
     */
-    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_2()
+    public function test_mu_throws_an_exception_when_invalid_field_type_in_record_type_2()
     {
-        $this->mu->register_recordtype('test', ['name' => ['string', 1]]);
+        $this->mu->register_record_type('test', ['name' => ['string', 1]]);
     }
 
     /**
     * @expectedException Exception
-    * @expectedExceptionMessage Received invalid fieldtype definition array.
+    * @expectedExceptionMessage Received invalid field_type definition array.
     */
-    public function test_mu_throws_an_exception_when_invalid_fieldtype_in_recordtype_3()
+    public function test_mu_throws_an_exception_when_invalid_field_type_in_record_type_3()
     {
-        $this->mu->register_recordtype('test', ['name' => 1]);
+        $this->mu->register_record_type('test', ['name' => 1]);
     }
 
-    public function test_mu_can_register_recordtypes_with_optional_fieldtypes()
+    public function test_mu_can_register_record_types_with_optional_field_types()
     {
-        $this->mu->register_recordtype('author', ['name' => ['string', true]]);
-        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
+        $this->mu->register_record_type('author', ['name' => ['string', true]]);
+        $this->assertEquals(['article', 'author'], $this->mu->record_types());
 
     }
 
@@ -493,50 +493,50 @@ class MuTest extends MuPHPUnitExtensions
         $this->assertEquals($expected, $actual);
     }
 
-    public function test_mu_can_deregister_fieldtypes()
+    public function test_mu_can_deregister_field_types()
     {
         $expected = ['datetime', 'float', 'integer', 'string'];
-        $this->assertTrue($this->mu->deregister_fieldtype('boolean'));
-        $actual = $this->mu->fieldtypes();
+        $this->assertTrue($this->mu->deregister_field_type('boolean'));
+        $actual = $this->mu->field_types();
         $this->assertEquals(sort($expected), sort($actual));
     }
 
-    public function test_mu_returns_false_when_deregistering_a_non_existent_fieldtype()
+    public function test_mu_returns_false_when_deregistering_a_non_existent_field_type()
     {
-        $this->assertFalse($this->mu->deregister_fieldtype('bugger'));
+        $this->assertFalse($this->mu->deregister_field_type('bugger'));
     }
 
-    public function test_mu_can_deregister_recordtypes()
+    public function test_mu_can_deregister_record_types()
     {
-        $this->mu->register_recordtype('author', ['name' => 'string', 'email' => 'string']);
-        $this->assertEquals(['article', 'author'], $this->mu->recordtypes());
-        $this->assertTrue($this->mu->deregister_recordtype('article'));
-        $this->assertEquals(['author'], $this->mu->recordtypes());
-        $this->assertTrue(array_key_exists('article', $this->mu->show_me_your_deregistered_recordtypes()));
+        $this->mu->register_record_type('author', ['name' => 'string', 'email' => 'string']);
+        $this->assertEquals(['article', 'author'], $this->mu->record_types());
+        $this->assertTrue($this->mu->deregister_record_type('article'));
+        $this->assertEquals(['author'], $this->mu->record_types());
+        $this->assertTrue(array_key_exists('article', $this->mu->show_me_your_deregistered_record_types()));
     }
 
-    public function test_mu_returns_false_when_deregistering_a_non_existent_recordtype()
+    public function test_mu_returns_false_when_deregistering_a_non_existent_record_type()
     {
-        $this->assertFalse($this->mu->deregister_recordtype('author'));
+        $this->assertFalse($this->mu->deregister_record_type('author'));
     }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage
      */
-    public function test_store_throws_an_exception_when_deregister_fieldtype_fails()
+    public function test_store_throws_an_exception_when_deregister_field_type_fails()
     {
-        $this->mu->register_fieldtype('shite', '\fijma\Mu\MockDateTime');
-        $this->mu->deregister_fieldtype('shite');
+        $this->mu->register_field_type('shite', '\fijma\Mu\MockDateTime');
+        $this->mu->deregister_field_type('shite');
     }
 
     /**
      * @expectedException Exception
      */
-    public function test_store_throws_an_exception_when_deregister_recordtype_fails()
+    public function test_store_throws_an_exception_when_deregister_record_type_fails()
     {
-        $this->mu->register_recordtype('shite', ['name' => 'string']);
-        $this->mu->deregister_recordtype('shite');
+        $this->mu->register_record_type('shite', ['name' => 'string']);
+        $this->mu->deregister_record_type('shite');
     }
 
     public function test_mu_accepts_empty_search_parameters_for_find()
@@ -548,7 +548,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_accepts_searches_for_deregistered_record_types()
     {
-        $this->mu->deregister_recordtype('article');
+        $this->mu->deregister_record_type('article');
         $results = $this->mu->find('article');
         // we're going to use our validation code to ensure the store is sending back a record.
         $this->assertEquals('', $this->mu->test_record_validation($results[1]));
@@ -568,18 +568,127 @@ class MuTest extends MuPHPUnitExtensions
      * @expectedExceptionMessage Received invalid search parameters:
       - Received invalid option (shits).
      */
-     public function test_mu_complains_about_a_single_invalid_find_parameter()
-     {
-         $this->mu->find('article', ['shits' => 0]);
-     }
+    public function test_mu_complains_about_a_single_invalid_find_parameter()
+    {
+        $this->mu->find('article', ['shits' => 0]);
+    }
 
     /**
      * @expectedException Exception
      * @expectedExceptionMessage Received invalid search parameters:
       - Received invalid options (shits, giggles).
      */
-     public function test_mu_complains_about_multiple_invalid_find_parameters()
-     {
-         $this->mu->find('article', ['shits' => 0, 'giggles' => 1]);
-     }
+    public function test_mu_complains_about_multiple_invalid_find_parameters()
+    {
+        $this->mu->find('article', ['shits' => 0, 'giggles' => 1]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid value for limit: expected integer, received string.
+     */
+    public function test_mu_complains_about_invalid_value_for_limit_find_parameter()
+    {
+        $this->mu->find('article', ['limit' => 'not a number']);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid value for offset: expected integer, received boolean.
+     */
+    public function test_mu_complains_about_invalid_value_for_offset_find_parameter()
+    {
+        $this->mu->find('article', ['offset' => false]);
+    }
+
+   /**
+    * @expectedException Exception
+    * @expectedExceptionMessage Received invalid search parameters:
+     - Invalid value for deleted: expected boolean, received integer.
+    */
+    public function test_mu_complains_about_invalid_value_for_deleted_find_parameter()
+    {
+        $this->mu->find('article', ['deleted' => 1]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid value for filter: expected array, received string.
+     */
+    public function test_mu_complains_about_invalid_value_for_filter_find_parameter()
+    {
+        $this->mu->find('article', ['filter' => 'not an array']);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid value for order: expected array, received float.
+     */
+    public function test_mu_complains_about_invalid_value_for_order_find_parameter()
+    {
+        $this->mu->find('article', ['order' => 3.14]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid field for record_type article: shisticle.
+     */
+    public function test_mu_complains_about_invalid_fields_in_find_parameter()
+    {
+        $this->mu->find('article', ['filter' => ['shisticle' => true]]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid data for filter field: article.
+     */
+    public function test_mu_complains_about_invalid_filter_values_in_find_parameter()
+    {
+        $this->mu->find('article', ['filter' => ['article' => 2]]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid value for ordering article: expected boolean, received float.
+     */
+    public function test_mu_complains_about_invalid_order_values_in_find_parameter()
+    {
+        $this->mu->find('article', ['order' => ['article' => 4.2]]);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters:
+      - Invalid data for filter field: article.
+      - Invalid value for deleted: expected boolean, received float.
+      - Invalid value for ordering summary: expected boolean, received integer.
+      - Invalid value for limit: expected integer, received string.
+      - Invalid value for offset: expected integer, received boolean.
+     */
+    public function test_mu_complains_about_all_of_the_things_in_find_paramter()
+    {
+        $parameters = ['filter' => ['article' => 2, 'summary' => 'gah'],
+                       'deleted' => 4.2,
+                       'order' => ['article' => true, 'summary' => 3],
+                       'limit' => 'not a number',
+                       'offset' => true];
+        $this->mu->find('article', $parameters);
+    }
+
+    public function test_mu_returns_an_empty_string_if_find_parameters_are_valid()
+    {
+        $parameters = ['filter' => ['article' => 'gah', 'summary' => 'gah'],
+                       'deleted' => false,
+                       'order' => ['article' => true, 'summary' => false],
+                       'limit' => 42,
+                       'offset' => 42];
+        $this->assertEquals('', $this->mu->test_validate_find_parameters('article', $parameters));
+    }
 }

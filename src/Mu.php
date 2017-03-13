@@ -15,22 +15,22 @@ class Mu
     protected $store;
 
     // The field types supported by the repository.
-    protected $fieldtypes = array();
+    protected $field_types = array();
 
     // The deregistered field types used by the repository (to access historical data).
-    protected $deregistered_fieldtypes = array();
+    protected $deregistered_field_types = array();
 
     // The record types supported by the repository.
-    protected $recordtypes = array();
+    protected $record_types = array();
 
     // The deregistered record types used by the repository (to access historical data).
-    protected $deregistered_recordtypes = array();
+    protected $deregistered_record_types = array();
 
     public function __construct(\fijma\Mu\Store $store)
     {
         $this->store = $store;
-        $this->load_fieldtypes();
-        $this->load_recordtypes();
+        $this->load_field_types();
+        $this->load_record_types();
     }
 
     public function version(): string
@@ -47,7 +47,7 @@ class Mu
     }
 
     // Returns the record for the given id. See \fijma\Mu\Store for documentation.
-    public function get($id): array
+    public function get($id)
     {
         return $this->store->get($id);
     }
@@ -92,33 +92,33 @@ class Mu
         return $this->store->unrelate($relationship_type, $from, $to);
     }
 
-    // Instantiates the field type objects into the fieldtypes array.
-    protected function load_fieldtypes()
+    // Instantiates the field type objects into the field_types array.
+    protected function load_field_types()
     {
         // active field types
-        $fieldtypes = $this->store->fieldtypes();
-        foreach ($fieldtypes as $fieldtype => $implementing_class) {
-            $this->fieldtypes[$fieldtype] = new $implementing_class();
+        $field_types = $this->store->field_types();
+        foreach ($field_types as $field_type => $implementing_class) {
+            $this->field_types[$field_type] = new $implementing_class();
         }
 
         // deregistered field types
-        $fieldtypes = $this->store->deregistered_fieldtypes();
-        foreach ($fieldtypes as $fieldtype => $implementing_class) {
-            $this->deregistered_fieldtypes[$fieldtype] = new $implementing_class();
+        $field_types = $this->store->deregistered_field_types();
+        foreach ($field_types as $field_type => $implementing_class) {
+            $this->deregistered_field_types[$field_type] = new $implementing_class();
         }
     }
 
-    // Reports the supported fieldtypes.
-    public function fieldtypes(): array
+    // Reports the supported field_types.
+    public function field_types(): array
     {
-        return array_keys($this->fieldtypes);
+        return array_keys($this->field_types);
     }
 
-    // Registers a new fieldtype.
-    public function register_fieldtype(string $fieldtype, string $implementing_class)
+    // Registers a new field_type.
+    public function register_field_type(string $field_type, string $implementing_class)
     {
-        if(in_array($fieldtype, $this->fieldtypes())) {
-            throw new \Exception('Fieldtype ' . $fieldtype . ' is already registered.');
+        if(in_array($field_type, $this->field_types())) {
+            throw new \Exception('Fieldtype ' . $field_type . ' is already registered.');
         }
 
         if (!class_exists($implementing_class)) {
@@ -129,79 +129,79 @@ class Mu
             throw new \Exception('Fieldtype implementing class must implement the \\fijma\\Mu\\FieldType interface.');
         }
 
-        $this->store->register_fieldtype($fieldtype, $implementing_class);
-        $this->fieldtypes[$fieldtype] = new $implementing_class();
+        $this->store->register_field_type($field_type, $implementing_class);
+        $this->field_types[$field_type] = new $implementing_class();
     }
 
-    // Deregisters a fieldtype. Returns true on success, false if the fieldtype was not registerd.
-    public function deregister_fieldtype(string $fieldtype)
+    // Deregisters a field_type. Returns true on success, false if the field_type was not registerd.
+    public function deregister_field_type(string $field_type)
     {
-        if (array_key_exists($fieldtype, $this->fieldtypes)) {
-            $this->store->deregister_fieldtype($fieldtype);
-            unset($this->fieldtypes[$fieldtype]);
+        if (array_key_exists($field_type, $this->field_types)) {
+            $this->store->deregister_field_type($field_type);
+            unset($this->field_types[$field_type]);
             return true;
         } else {
             return false;
         }
     }
 
-    // Reads the recordtypes supported by the repository.
-    protected function load_recordtypes()
+    // Reads the record_types supported by the repository.
+    protected function load_record_types()
     {
-        $this->recordtypes = $this->store->recordtypes();
-        $this->deregistered_recordtypes = $this->store->deregistered_recordtypes();
+        $this->record_types = $this->store->record_types();
+        $this->deregistered_record_types = $this->store->deregistered_record_types();
     }
 
     // Reports the supported record types.
-    public function recordtypes(): array
+    public function record_types(): array
     {
-        return array_keys($this->recordtypes);
+        return array_keys($this->record_types);
     }
 
-    // Registers a new recordtype.
-    // Note that we accept a shorthand method of defining a field by the fieldtype alone if
+    // Registers a new record_type.
+    // Note that we accept a shorthand method of defining a field by the field_type alone if
     // it is mandatory. Otherwise, we need to supply the definition as an array.
-    public function register_recordtype(string $recordtype, array $fieldtypes)
+    public function register_record_type(string $record_type, array $field_types)
     {
-        if(array_key_exists($recordtype, $this->recordtypes)) {
-            throw new \Exception('Recordtype ' . $recordtype . ' is already registered.');
+        if(array_key_exists($record_type, $this->record_types)) {
+            throw new \Exception('Recordtype ' . $record_type . ' is already registered.');
         }
 
-        if(empty($fieldtypes)) {
+        if(empty($field_types)) {
             throw new \Exception('Fieldtype array cannot be empty.');
         }
 
-        $fieldtype_list = array();
-        $amended_fieldtypes = array();
+        $field_type_list = array();
+        $amended_field_types = array();
 
-        foreach($fieldtypes as $fieldname => $definition) {
+        foreach($field_types as $fieldname => $definition) {
             if (!is_string($fieldname)) {
                 throw new \Exception('Field names must be strings.');
             }
             if (is_string($definition)) {
-                $fieldtype_list[] = $definition;
-                $amended_fieldtypes[$fieldname] = [$definition, false];
+                $field_type_list[] = $definition;
+                $amended_field_types[$fieldname] = [$definition, false];
             } elseif (is_array($definition)) {
                 if (count($definition) !== 2) {
-                    throw new \Exception('Received invalid fieldtype definition array.');
+                    throw new \Exception('Received invalid field_type definition array.');
                 }
                 if (!is_string($definition[0])) {
-                    throw new \Exception('Received invalid fieldtype definition array.');
+                    throw new \Exception('Received invalid field_type definition array.');
                 }
-                $fieldtype_list[] = $definition[0];
+                $field_type_list[] = $definition[0];
                 if (!is_bool($definition[1])) {
                     throw new \Exception('Optional flag must be a boolean.');
                 }
-                $amended_fieldtypes[$fieldname] = $definition;
+                $amended_field_types[$fieldname] = $definition;
             } else {
-                throw new \Exception('Received invalid fieldtype definition array.');
+                throw new \Exception('Received invalid field_type definition array.');
             }
 
         }
 
-        $diff = array_diff($fieldtype_list, array_keys($this->fieldtypes));
+        $diff = array_diff($field_type_list, array_keys($this->field_types));
         if(!empty($diff)) {
-            $s = 'The following fieldtype';
+            $s = 'The following field_type';
             $s .= count($diff) > 1 ? 's are ' : ' is ';
             $s .= 'not registered: ';
             $s .= implode(', ', $diff);
@@ -209,17 +209,17 @@ class Mu
             throw new \Exception($s);
         }
 
-        $this->store->register_recordtype($recordtype, $amended_fieldtypes);
-        $this->recordtypes[$recordtype] = $amended_fieldtypes;
+        $this->store->register_record_type($record_type, $amended_field_types);
+        $this->record_types[$record_type] = $amended_field_types;
     }
 
-    // Deregisters a recordtype. Returns true on success, false if the recordtype was not registerd.
-    public function deregister_recordtype(string $recordtype)
+    // Deregisters a record_type. Returns true on success, false if the record_type was not registerd.
+    public function deregister_record_type(string $record_type)
     {
-        if (array_key_exists($recordtype, $this->recordtypes)) {
-            $this->deregistered_recordtypes[$recordtype] = $this->recordtypes[$recordtype];
-            $this->store->deregister_recordtype($recordtype);
-            unset($this->recordtypes[$recordtype]);
+        if (array_key_exists($record_type, $this->record_types)) {
+            $this->deregistered_record_types[$record_type] = $this->record_types[$record_type];
+            $this->store->deregister_record_type($record_type);
+            unset($this->record_types[$record_type]);
             return true;
         } else {
             return false;
@@ -269,11 +269,11 @@ class Mu
         return '';
     }
 
-    // Validates a data array against the recordtype.
+    // Validates a data array against the record_type.
     // Returns a message detailing the errors (empty string on success).
-    protected function validate(string $recordtype, array $data): string
+    protected function validate(string $record_type, array $data): string
     {
-        $definition = $this->recordtypes[$recordtype];
+        $definition = $this->record_types[$record_type];
         
         $diff = array_diff_key($definition, $data);
         if(!empty($diff)) {
@@ -285,8 +285,8 @@ class Mu
         }
 
         $invalid_fields = array();
-        foreach($definition as $field => $fieldtype) {
-            if(!$this->fieldtypes[$fieldtype[0]]->validate($data[$field], $fieldtype[1])) {
+        foreach($definition as $field => $field_type) {
+            if(!$this->field_types[$field_type[0]]->validate($data[$field], $field_type[1])) {
                 $invalid_fields[] = $field;
             }
         }
@@ -326,13 +326,14 @@ class Mu
      *     2. An array
      *     3. If it's not empty, it can only have the following keys: ['filter', 'order', 'limit', 'offset', 'deleted']
      *     4. For each item, perform the following validations:
-     *         4.1. If filter, order, or deleted, confirm:
+     *         4.1. If filter or order, confirm:
      *             4.1.1. The value is an array
      *             4.1.2. For each item in the array, confirm:
      *                 4.1.2.1. Each key in the array is a valid field for the given record type
      *                 4.1.2.2. If filter, each value in the array is valid for the field type
-     *                 4.1.2.3. If order or deleted, each value in the array is a boolen
+     *                 4.1.2.3. If order, each value in the array is a boolean
      *         4.2. If limit or offset, confirm the value is an integer
+     *         4.3. If delete, confirm the value is a boolean
      */
     protected function validate_find_parameters(string $record_type, array $params): string
     {
@@ -341,10 +342,10 @@ class Mu
 
         // 0. If it's not a string, we haven't even started because of the type declaration.
         // 1. Similarly, if we can't find the record type, bomb out.
-        if(array_key_exists($record_type, $this->recordtypes)) {
-            $record_type_definition = $this->recordtypes[$record_type];
-        } elseif(array_key_exists($record_type, $this->deregistered_recordtypes)) {
-            $record_type_definition = $this->deregistered_recordtypes[$record_type];
+        if(array_key_exists($record_type, $this->record_types)) {
+            $record_type_definition = $this->record_types[$record_type];
+        } elseif(array_key_exists($record_type, $this->deregistered_record_types)) {
+            $record_type_definition = $this->deregistered_record_types[$record_type];
         } else {
             return 'Record type ' . $record_type . ' does not exist.';
         }
@@ -376,26 +377,32 @@ class Mu
                     }
                     break;
                 case 'deleted':
+                    if (!is_bool($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
+                    }
+                    break;
                 case 'filter':
                 case 'order':
                     // 6. Check that the value is an array.
                     if (!is_array($value)) {
                         $errors[] = 'Invalid value for ' . $key . ': expected array, received ' . gettype($value) . '.';
+                        break;
                     }
                     // 7. Check that each key is a valid field for the record type.
                     foreach($value as $field => $value) {
                         if(!array_key_exists($field, $record_type_definition)) {
-                            $errors[] = 'Invalid field for recordtype ' . $recordtype . ': ' . $field . '.';
+                            $errors[] = 'Invalid field for record_type ' . $record_type . ': ' . $field . '.';
+                            continue;
                         }
                         // 8. If filter, each value is valid for the field type.
                         if ($key === 'filter') {
-                            if(!$this->fieldtypes[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
-                                $errors[] = 'Invalid data provided for filter field: ' . $field . '.';
+                            if(!$this->field_types[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
+                                $errors[] = 'Invalid data for filter field: ' . $field . '.';
                             }
-                        // 9. If order or deleted, each value is a boolen.
+                        // 9. If order, each value is a boolen.
                         } else {
                             if(!is_bool($value)) {
-                                $errors[] = 'Invalid value received for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
+                                $errors[] = 'Invalid value for ordering ' . $field . ': expected boolean, received ' . gettype($value) . '.';
                             }
                         }
                     }

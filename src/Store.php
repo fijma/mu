@@ -17,10 +17,10 @@ namespace fijma\Mu;
  * own purposes, but this minimal definition will be validated by the Mu api.
  * 
  * Field type arrays are of the following form:
- *     ['fieldtype_name' => 'implementing_class', ...]
+ *     ['field_type_name' => 'implementing_class', ...]
  *
  * Record type arrays are of the following form:
- *    ['field' => ['fieldtype_name', (bool)optional], ...]
+ *    ['field' => ['field_type_name', (bool)optional], ...]
  * 
  */
 interface Store
@@ -34,7 +34,7 @@ interface Store
 
     /**
      * Returns the record for the given id, or null if id not found.
-     * This function must use the fieldtypes->convert() function to get the php version of the data.
+     * This function must use the field_types->convert() function to get the php version of the data.
      * Note that the store must support registered as well as deregistered field types and record types
      * when retrieving existing records.
      */
@@ -84,50 +84,50 @@ interface Store
     /**
      * Returns an array of the field types registered in this store.
      */
-    public function fieldtypes(): array;
+    public function field_types(): array;
 
     /**
      * Returns an array of the deregistered field types in this store.
      */
-    public function deregistered_fieldtypes(): array;
+    public function deregistered_field_types(): array;
 
     /**
-     * Adds a fieldtype definition to the store's registry.
+     * Adds a field_type definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    public function register_fieldtype(string $fieldtype, string $implementing_class);
+    public function register_field_type(string $field_type, string $implementing_class);
 
     /**
-    * Removes a fieldtype definition from the store's registry.
+    * Removes a field_type definition from the store's registry.
     * This function must throw an exception if the deregistration fails.
-    * Deregistration should not prevent a record using the fieldtype from being retrieved.
-    * It should prevent all other actions for a record using that fieldtype.
+    * Deregistration should not prevent a record using the field_type from being retrieved.
+    * It should prevent all other actions for a record using that field_type.
     */
-    public function deregister_fieldtype(string $fieldtype);
+    public function deregister_field_type(string $field_type);
     
     /**
      * Returns an array of the record types registered in this store.
      */
-    public function recordtypes(): array;
+    public function record_types(): array;
 
     /**
      * Returns an array of the deregistered record types in this store.
      */
-    public function deregistered_recordtypes(): array;
+    public function deregistered_record_types(): array;
 
     /**
-     * Adds a recordtype definition to the store's registry.
+     * Adds a record_type definition to the store's registry.
      * This function must throw an exception if the registration fails.
      */
-    public function register_recordtype(string $recordtype, Array $fieldtypes);
+    public function register_record_type(string $record_type, Array $field_types);
 
     /**
-     * Removes a recordtype defintion from the store's registry.
+     * Removes a record_type defintion from the store's registry.
      * This function must throw an exception if the deregistration fails.
-     * Deregistration should not prevent a record of the deregistered recordtype from being retrieved.
-     * It should prevent all other actions for a record of that recordtype.
+     * Deregistration should not prevent a record of the deregistered record_type from being retrieved.
+     * It should prevent all other actions for a record of that record_type.
      */
-    public function deregister_recordtype(string $recordtype);
+    public function deregister_record_type(string $record_type);
 
     /**
      * Returns all entries of the given $record_type.
@@ -137,6 +137,7 @@ interface Store
      *     - limit: limit the number of results to return.
      *     - offset: defines the number of results to be skipped.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
+     * It is a decision for the implementer whether filters must be exact matches, and how to deal with non-scalars.
      */
     public function find(string $record_type, array $params = []): array;
 
