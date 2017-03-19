@@ -6,7 +6,7 @@ namespace fijma\Mu;
  * Defines the api for Mu data repositories.
  *
  * Records are arrays of the following form:
- *     [     'id' => integer,            // unique id
+ *     [     'id' => any data type,      // unique id
  *         'type' => string,             // the record type
  *      'version' => string,             // version id (for optimistic locking and version history)
  *      'deleted' => boolean,            // flags whether record is deleted (no hard deletes)
@@ -116,7 +116,7 @@ interface Store
     public function deregistered_record_types(): array;
 
     /**
-     * Adds a record_type definition to the store's registry.
+     * Adds a record_type definition to the store's registry, and creates the necessary infrastructure to store records of that type.
      * This function must throw an exception if the registration fails.
      */
     public function register_record_type(string $record_type, Array $field_types);
@@ -137,7 +137,9 @@ interface Store
      *     - limit: limit the number of results to return.
      *     - offset: defines the number of results to be skipped.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
+     *
      * It is a decision for the implementer whether filters must be exact matches, and how to deal with non-scalars.
+     * The resulting array should be in the form [$id => [$record], ...]
      */
     public function find(string $record_type, array $params = []): array;
 
@@ -149,6 +151,9 @@ interface Store
      *     - record_type: filters results to only those related records matching this type.
      *     - filter: array of [field => criteria] tuples to filter the results by. Only valid if record_type has been specified.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
+     *
+     * This function must throw an exception if the $record_id does not exist.
+     * The resulting array should be in the form [$id => [$record], ...]
      */
     public function related($record_id, array $params = []): array;
 

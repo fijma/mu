@@ -41,7 +41,6 @@ class MuTest extends MuPHPUnitExtensions
         $record = $this->mu->create('record', $data);
         $this->assertInternalType('array', $record);
         $this->assertArrayHasKey('id', $record);
-        $this->assertInternalType('integer', $record['id']);
         $this->assertArrayHasKey('type', $record);
         $this->assertInternalType('string', $record['type']);
         $this->assertEquals('record', $record['type']);
@@ -74,7 +73,6 @@ class MuTest extends MuPHPUnitExtensions
         $record = $this->mu->get(1);
         $this->assertInternalType('array', $record);
         $this->assertArrayHasKey('id', $record);
-        $this->assertInternalType('integer', $record['id']);
         $this->assertArrayHasKey('type', $record);
         $this->assertInternalType('string', $record['type']);
         $this->assertEquals('record', $record['type']);
@@ -243,7 +241,7 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_reports_its_version()
     {
-        $this->assertEquals('0.9.0', $this->mu->version());
+        $this->assertEquals('0.0.0', $this->mu->version());
     }
 
     public function test_mu_reports_the_field_types_it_supports()
@@ -466,14 +464,14 @@ class MuTest extends MuPHPUnitExtensions
 
     public function test_mu_returns_an_error_string_for_one_invalid_record_field()
     {
-        $expected = 'Invalid record - invalid data for the following field: id is not an integer.';
-        $actual = $this->mu->test_record_validation(['id' => '1', 'type' => 'String', 'version' => '1', 'deleted' => false, 'data' => []]);
+        $expected = 'Invalid record - invalid data for the following field: type is not a string.';
+        $actual = $this->mu->test_record_validation(['id' => '1', 'type' => 5, 'version' => '1', 'deleted' => false, 'data' => []]);
         $this->assertEquals($expected, $actual);
     }
 
     public function test_mu_returns_an_error_string_for_multiple_invalid_record_fields()
     {
-        $expected = 'Invalid record - invalid data for the following fields: id is not an integer, type is not a string, version is not a string, deleted is not a boolean, data is not an array.';
+        $expected = 'Invalid record - invalid data for the following fields: type is not a string, version is not a string, deleted is not a boolean, data is not an array.';
         $actual = $this->mu->test_record_validation(['id' => '1', 'type' => 1, 'version' => 1, 'deleted' => 'String', 'data' => null]);
         $this->assertEquals($expected, $actual);
     }
@@ -491,6 +489,12 @@ class MuTest extends MuPHPUnitExtensions
         $expected = 'Missing the following fields: title, publishdate, summary, article.';
         $actual = $this->mu->test_validation('article', []);
         $this->assertEquals($expected, $actual);
+    }
+
+    public function test_mu_allows_additional_record_keys()
+    {   
+        $record = ['id' => 0, 'type' => '', 'version' => '', 'deleted' => false, 'data' => [], 'custom' => 'data'];
+        $this->assertEquals('', $this->mu->test_record_validation($record));
     }
 
     public function test_mu_can_deregister_field_types()
@@ -690,5 +694,21 @@ class MuTest extends MuPHPUnitExtensions
                        'limit' => 42,
                        'offset' => 42];
         $this->assertEquals('', $this->mu->test_validate_find_parameters('article', $parameters));
+    }
+
+    public function test_mu_returns_related_records_without_requiring_parameters()
+    {
+        $results = $this->mu->related(1);
+        // we're going to use our validation code to ensure the store is sending back a record.
+        $this->assertEquals('', $this->mu->test_record_validation($results[1]));
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage No record with id non-existent.
+     */
+    public function test_mu_throws_an_exception_when_trying_to_find_related_records_of_non_existent_records()
+    {
+        $results = $this->mu->related('non-existent');
     }
 }

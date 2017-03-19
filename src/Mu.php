@@ -9,7 +9,7 @@ class Mu
 {
 
     // The api version
-    private $version = '0.9.0';
+    private $version = '0.0.0';
 
     // The \fijma\Mu\Store instance used to access the repository.
     protected $store;
@@ -242,9 +242,6 @@ class Mu
         }
 
         $invalid_fields = [];
-        if(!is_integer($record['id'])) {
-            $invalid_fields[] = 'id is not an integer';
-        }
         if (!is_string($record['type'])) {
             $invalid_fields[] = 'type is not a string';
         }
@@ -314,7 +311,6 @@ class Mu
         $errors = $this->validate_find_parameters($record_type, $params);
         if ($errors) throw new \Exception($errors);
         return $this->store->find($record_type, $params);
-
     }
 
     /**
@@ -418,16 +414,95 @@ class Mu
             $errmsg = "Received invalid search parameters: ";
             return $errmsg . implode("\n - ", $errors);
         }
-
     }
 
     /**
-     * Returns all records which share a relationship with the record defined by $record_id.
+     * Returns all records which share a relationship with the record identified by $record_id.
      * See \fijma\Mu\Store for documentation.
      */
     public function related($record_id, array $params = []): array
     {
+        $errors = $this->validate_related_parameters($params);
+        if ($errors) throw new \Exception($errors);
+        return $this->store->related($record_id, $params);
+    }
 
+    /**
+     * Validates arguments for the related function.
+     */
+    protected function validate_related_parameters(array $params): string
+    {
+        $errors = [];
+
+        // First, if empty we're good to go.
+        if (empty($params)) {
+            return '';
+        // Otherwise, check that our keys are good.
+        } else {
+            $expected_keys = ['relationship_type', 'direction', 'record_type', 'filter', 'deleted'];
+            $diff = array_diff(array_keys($params), $expected_keys);
+            if (!empty($diff)) {
+                $s = 'Received invalid option';
+                $s .= count($diff) > 1 ? 's (' : ' (';
+                $s .= implode(', ', $diff);
+                $s .= ').';
+                $errors[] = $s;
+            }
+        }
+
+        // Start the validation of the entries.
+        foreach ($params as $key => $value) {
+            switch ($key) {
+                case 'relationship_type':
+                case 'direction':
+                case 'record_type':
+                    if (!is_string($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected string, received ' . gettype($value) . '.';
+                    }
+                    break;
+                case 'deleted':
+                    if (!is_bool($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
+                    }
+                    break;
+                case 'filter':
+                    $record_type_definition = [];            
+                    // If record_type hasn't been defined, we shouldn't have this option.
+                    if (!array_key_exists('record_type', $params)) {
+                        $errors[] = 'Cannot define filters without a record_type.';
+                        break;
+                    } else {
+                        if(array_key_exists($record_type, $this->record_types)) {
+                            $record_type_definition = $this->record_types[$record_type];
+                        } elseif(array_key_exists($record_type, $this->deregistered_record_types)) {
+                            $record_type_definition = $this->deregistered_record_types[$record_type];
+                        } else {
+                            $errors[] = 'Record type ' . $record_type . ' does not exist.';
+                            break;
+                        }
+                        // Check that each key is a valid field for the record type.
+                        foreach($value as $field => $value) {
+                            if(!array_key_exists($field, $record_type_definition)) {
+                                $errors[] = 'Invalid field for record_type ' . $record_type . ': ' . $field . '.';
+                                continue;
+                            }
+                            if(!$this->field_types[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
+                                $errors[] = 'Invalid data for filter field: ' . $field . '.';
+                            }
+                        }
+                    }
+                default:
+                    //do nothing, we've caught this already
+            }
+        }
+
+        if(empty($errors)) {
+            return '';
+        } else {
+            // make the return string here.
+            $errmsg = "Received invalid search parameters: ";
+            return $errmsg . implode("\n - ", $errors);
+        }
     }
 
     /**

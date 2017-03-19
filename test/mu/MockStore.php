@@ -139,12 +139,20 @@ class MockStore implements Store
                       'deleted' => false,
                          'data' => []]
                 ];
-
     }
 
     public function related($record_id, array $params = []): array
     {
-
+        if($record_id === 'non-existent') {
+            throw new \Exception('No record with id non-existent.');
+        } else {
+        return [1 => [     'id' => 1,
+                         'type' => 'article',
+                      'version' => 'v1',
+                      'deleted' => false,
+                         'data' => []]
+                ];
+        }
     }
 
     public function versions($record_id): array
