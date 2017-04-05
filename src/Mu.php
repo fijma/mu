@@ -433,6 +433,7 @@ class Mu
     protected function validate_related_parameters(array $params): string
     {
         $errors = [];
+        $record_type = '';
 
         // First, if empty we're good to go.
         if (empty($params)) {
@@ -458,8 +459,13 @@ class Mu
                 case 'record_type':
                     if (!is_string($value)) {
                         $errors[] = 'Invalid value for ' . $key . ': expected string, received ' . gettype($value) . '.';
+                        break;
                     }
-                    break;
+
+                    if ($key === 'direction' && !($value === 'to' || $value === 'from')) {
+                        $errors[] = 'Invalid value for direction: expected "to" or "from", received ' . $value . '.';
+                        break;
+                    }
                 case 'deleted':
                     if (!is_bool($value)) {
                         $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';

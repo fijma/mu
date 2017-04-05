@@ -711,4 +711,12 @@ class MuTest extends MuPHPUnitExtensions
     {
         $results = $this->mu->related('non-existent');
     }
+
+    public function test_mu_validates_related_parameters()
+    {
+        $params = ['relationship_type' => 'reltype', 'direction' => 'to'];
+        // before you go any further, you need to write a get_record_type_definition function, because you use it in more than one function
+    }
+
+
 }

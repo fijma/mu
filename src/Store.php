@@ -147,7 +147,7 @@ interface Store
      * Returns all records which share a relationship with the record defined by $record_id.
      * Parameters are:
      *     - relationship_type: filters results to only those relationships matching this type.
-     *     - direction: the direction of the relationship. 'to' indicates incoming relationships with respect to the given $record_id. If omitted, all relationships are returned.
+     *     - direction: the direction of the relationship, 'to' or 'from'. 'to' indicates incoming relationships with respect to the given $record_id. If omitted, all relationships are returned.
      *     - record_type: filters results to only those related records matching this type.
      *     - filter: array of [field => criteria] tuples to filter the results by. Only valid if record_type has been specified.
      *     - deleted: filters on whether records are deleted (true) or not (false). If omitted, all records are returned.
