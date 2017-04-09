@@ -712,11 +712,112 @@ class MuTest extends MuPHPUnitExtensions
         $results = $this->mu->related('non-existent');
     }
 
-    public function test_mu_validates_related_parameters()
+    public function test_mu_returns_an_empty_string_if_related_parameters_are_valid()
     {
         $params = ['relationship_type' => 'reltype', 'direction' => 'to', 'record_type' => 'article', 'deleted' => false, 'filter' => ['summary' => 'gah']];
         $this->assertEquals('', $this->mu->test_validate_related_parameters($params));
     }
 
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: received invalid option (gah).
+     */
+    public function test_mu_validate_related_parameters_complains_about_a_single_invalid_parameter()
+    {
+        $params = ['gah' => 'gah'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: received invalid options (grrr, argh).
+     */
+    public function test_mu_validate_related_parameters_complains_about_multiple_invalid_parameters()
+    {
+        $params = ['grrr' => 'grrr', 'argh' => 'argh', 'direction' => 'to'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: invalid value for relationship_type: expected string, received integer.
+     * - invalid value for direction: expected string, received float.
+     * - invalid value for record_type: expected string, received boolean.
+     */
+    public function test_mu_validate_related_parameters_complains_about_invalid_string_parameters()
+    {
+        $params = ['relationship_type' => 1, 'direction' => 1.1, 'record_type' => false];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: invalid value for direction: expected "to" or "from", received either.
+     */
+    public function test_mu_validate_related_parameters_complains_about_invalid_value_for_direction()
+    {
+        $params = ['direction' => 'either'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: record type not_a_record_type does not exist.
+     */
+    public function test_mu_validate_related_parameters_complains_about_a_non_existent_record_type()
+    {
+        $params = ['record_type' => 'not_a_record_type'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: invalid value for deleted: expected boolean, received string.
+     */
+    public function test_mu_validate_related_parameters_complains_about_invalid_value_for_deleted()
+    {
+        $params = ['deleted' => 'nosir'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: cannot define filters without a record_type.
+     */
+    public function test_mu_validate_related_parameters_complains_about_a_filter_without_a_record_type()
+    {
+        $params = ['filter' => ['no_record_type' => true]];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: record type not_a_record_type does not exist.
+     */
+    public function test_mu_validate_related_parameters_complains_about_a_non_existent_record_type_in_the_filter_bit()
+    {
+        $params = ['filter' => ['not_a_field' => 'adsf'], 'record_type' => 'not_a_record_type'];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: invalid field for record_type article: bugger.
+     */
+    public function test_mu_validate_related_parameters_complains_about_an_invalid_filter_field()
+    {
+        $params = ['record_type' => 'article', 'filter' => ['bugger' => false]];
+        $this->mu->related('id', $params);
+    }
+
+    /**
+     * @expectedException Exception
+     * @expectedExceptionMessage Received invalid search parameters: invalid data for filter field: summary.
+     */
+    public function test_mu_validate_related_parameters_complains_about_an_invalid_filter_value()
+    {
+        $params = ['record_type' => 'article', 'filter' => ['summary' => 3.14]];
+        $this->mu->related('id', $params);
+    }
 
 }
