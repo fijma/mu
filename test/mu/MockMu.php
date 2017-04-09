@@ -34,4 +34,9 @@ class MockMu extends Mu
         return $this->validate_find_parameters($record_type, $parameters);
     }
 
+    public function test_validate_related_parameters($parameters)
+    {
+        return $this->validate_related_parameters($parameters);
+    }
+
 }

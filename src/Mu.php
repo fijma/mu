@@ -270,9 +270,10 @@ class Mu
     // Returns a message detailing the errors (empty string on success).
     protected function validate(string $record_type, array $data): string
     {
-        $definition = $this->record_types[$record_type];
+        $record_type_definition = $this->get_record_type_definition($record_type);
+        if(is_string($record_type_definition)) return $record_type_definition;
         
-        $diff = array_diff_key($definition, $data);
+        $diff = array_diff_key($record_type_definition, $data);
         if(!empty($diff)) {
             $s = 'Missing the following field';
             $s .= count($diff) > 1 ? 's: ' : ': ';
@@ -282,7 +283,7 @@ class Mu
         }
 
         $invalid_fields = array();
-        foreach($definition as $field => $field_type) {
+        foreach($record_type_definition as $field => $field_type) {
             if(!$this->field_types[$field_type[0]]->validate($data[$field], $field_type[1])) {
                 $invalid_fields[] = $field;
             }
@@ -334,15 +335,11 @@ class Mu
     protected function validate_find_parameters(string $record_type, array $params): string
     {
         $errors = [];
-        $record_type_definition = [];
 
         // 0. If it's not a string, we haven't even started because of the type declaration.
         // 1. Similarly, if we can't find the record type, bomb out.
-        if(array_key_exists($record_type, $this->record_types)) {
-            $record_type_definition = $this->record_types[$record_type];
-        } elseif(array_key_exists($record_type, $this->deregistered_record_types)) {
-            $record_type_definition = $this->deregistered_record_types[$record_type];
-        } else {
+        $record_type_definition = $this->get_record_type_definition($record_type);
+        if (is_string($record_type_definition)) {
             return 'Record type ' . $record_type . ' does not exist.';
         }
 
@@ -433,7 +430,6 @@ class Mu
     protected function validate_related_parameters(array $params): string
     {
         $errors = [];
-        $record_type = '';
 
         // First, if empty we're good to go.
         if (empty($params)) {
@@ -466,6 +462,7 @@ class Mu
                         $errors[] = 'Invalid value for direction: expected "to" or "from", received ' . $value . '.';
                         break;
                     }
+                    break;
                 case 'deleted':
                     if (!is_bool($value)) {
                         $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
@@ -478,18 +475,15 @@ class Mu
                         $errors[] = 'Cannot define filters without a record_type.';
                         break;
                     } else {
-                        if(array_key_exists($record_type, $this->record_types)) {
-                            $record_type_definition = $this->record_types[$record_type];
-                        } elseif(array_key_exists($record_type, $this->deregistered_record_types)) {
-                            $record_type_definition = $this->deregistered_record_types[$record_type];
-                        } else {
-                            $errors[] = 'Record type ' . $record_type . ' does not exist.';
+                        $record_type_definition = $this->get_record_type_definition($params['record_type']);
+                        if (is_string($record_type_definition)) {
+                            $errors[] = 'Record type ' . $params['record_type'] . ' does not exist.';
                             break;
                         }
                         // Check that each key is a valid field for the record type.
                         foreach($value as $field => $value) {
                             if(!array_key_exists($field, $record_type_definition)) {
-                                $errors[] = 'Invalid field for record_type ' . $record_type . ': ' . $field . '.';
+                                $errors[] = 'Invalid field for record_type ' . $params['record_type'] . ': ' . $field . '.';
                                 continue;
                             }
                             if(!$this->field_types[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
@@ -497,6 +491,7 @@ class Mu
                             }
                         }
                     }
+                    break;
                 default:
                     //do nothing, we've caught this already
             }
@@ -517,6 +512,20 @@ class Mu
     public function versions($record_id): array
     {
         
+    }
+
+    /**
+     * 
+     */
+    protected function get_record_type_definition(string $record_type)
+    {
+        if(array_key_exists($record_type, $this->record_types)) {
+            return $this->record_types[$record_type];
+        } elseif(array_key_exists($record_type, $this->deregistered_record_types)) {
+            return $this->deregistered_record_types[$record_type];
+        } else {
+            return 'Record type ' . $record_type . ' does not exist.';
+        }
     }
 
 }
