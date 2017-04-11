@@ -519,9 +519,9 @@ class Mu
     /**
      * Returns the version history for the given record.
      */
-    public function versions($record_id): array
+    public function versions($record_id)
     {
-        
+        return $this->store->versions($record_id);
     }
 
     /**

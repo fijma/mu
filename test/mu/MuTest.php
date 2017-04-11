@@ -820,4 +820,19 @@ class MuTest extends MuPHPUnitExtensions
         $this->mu->related('id', $params);
     }
 
+    public function test_mu_gets_a_records_version_history()
+    {
+        $results = $this->mu->versions(1);
+        foreach($results as $v => $record) {
+            $this->assertEquals(1, $record['id']);
+            $this->assertEquals($v, $record['version']);
+        }
+    }
+
+    public function test_mu_returns_null_for_versions_when_record_doesnt_exist()
+    {
+        $this->assertNull($this->mu->versions('not here'));
+    }
+
+
 }

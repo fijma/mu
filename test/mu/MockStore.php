@@ -155,11 +155,6 @@ class MockStore implements Store
         }
     }
 
-    public function versions($record_id): array
-    {
-        
-    }
-
     public function deregister_field_type(string $field_type)
     {
         if($field_type === 'shite') {
@@ -187,5 +182,25 @@ class MockStore implements Store
                               'summary' => ['string', false],
                               'article' => ['string', false]]];
     }
+
+    public function versions($record_id)
+    {
+        if ($record_id === 1) {
+            return ['v1' => ['id' => 1,
+                             'type' => 'article',
+                          'version' => 'v1',
+                          'deleted' => false,
+                             'data' => []],
+                    'v2' => ['id' => 1,
+                             'type' => 'article',
+                          'version' => 'v2',
+                          'deleted' => false,
+                             'data' => []]
+                    ];
+        }
+        return null;
+    }
+
+
 
 }

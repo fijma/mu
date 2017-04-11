@@ -158,8 +158,8 @@ interface Store
     public function related($record_id, array $params = []): array;
 
     /**
-     * Returns the version history for the given record.
+     * Returns the version history for the given record, or null if the record is not found.
      * This function has no parameters.
      */
-    public function versions($record_id): array;
+    public function versions($record_id);
 }
