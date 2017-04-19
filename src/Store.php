@@ -160,6 +160,28 @@ interface Store
     /**
      * Returns the version history for the given record, or null if the record is not found.
      * This function has no parameters.
+     * The resulting array should be in the form [$version => [$record], ...]
      */
     public function versions($record_id);
+
+    /**
+     * Amends the record type definition, and performs data migration in the underlying repository.
+     * $params is an array listing the changes to be made to the given record type. Each change should be supplied as a separate array,
+     * such that multiple items of the same operation are self-contained.
+     * Supported operations are:
+     *     - add: add a new field, use ['add' => ['field_name', 'field_type']].
+     *     - remove: remove an existing field, ['remove' => 'field_name'].
+     *     - rename: rename an existing field, ['rename' => ['current_name', 'new_name']].
+     *     - change: change the field type of an existing field, ['change' => ['field_name', 'new_field_type', $optional_transformation_closure]].
+     * 
+     * Prior to committing the amendments to the definition or the records, the implementing class must test each record and confirm that,
+     * after running the optional transformation, each value being changed is valid for the new field type. Any failures must be saved to
+     * the log file at the location supplied in the $log argument).
+     * $force_changes indicates whether failures in validation should prevent the updates to the record type definition and data migration should
+     * be committed to the repository. If true, then the changes are committed either way. If false, the changes are only committed if no validation
+     * errors were sent to the log file.
+     * The function should return true on success (either no validation failures, or $force_changes === true), false on failure (validation
+     * failures were encountered and $force_changes === false).
+     */
+    public function amend_record_type(string $record_type, array $params, string $log, bool $force_changes): \boolean;
 }

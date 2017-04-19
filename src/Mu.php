@@ -315,105 +315,6 @@ class Mu
     }
 
     /**
-     * Validates arguments for the find function.
-     * A valid record type is:
-     *     0. A string
-     *     1. Is a valid record type (can be deregistered)
-     * A valid parameter array is:
-     *     2. An array
-     *     3. If it's not empty, it can only have the following keys: ['filter', 'order', 'limit', 'offset', 'deleted']
-     *     4. For each item, perform the following validations:
-     *         4.1. If filter or order, confirm:
-     *             4.1.1. The value is an array
-     *             4.1.2. For each item in the array, confirm:
-     *                 4.1.2.1. Each key in the array is a valid field for the given record type
-     *                 4.1.2.2. If filter, each value in the array is valid for the field type
-     *                 4.1.2.3. If order, each value in the array is a boolean
-     *         4.2. If limit or offset, confirm the value is an integer
-     *         4.3. If delete, confirm the value is a boolean
-     */
-    protected function validate_find_parameters(string $record_type, array $params): string
-    {
-        $errors = [];
-
-        // 0. If it's not a string, we haven't even started because of the type declaration.
-        // 1. Similarly, if we can't find the record type, bomb out.
-        $record_type_definition = $this->get_record_type_definition($record_type);
-        if (is_string($record_type_definition)) {
-            return 'Record type ' . $record_type . ' does not exist.';
-        }
-
-        // 2. If it's not an array, we haven't even started because of the type declaration.
-        // 3. First, if empty we're good to go.
-        if (empty($params)) {
-            return '';
-        // 4. Otherwise, check that our keys are good.
-        } else {
-            $expected_keys = ['deleted', 'filter', 'limit', 'offset', 'order'];
-            $diff = array_diff(array_keys($params), $expected_keys);
-            if (!empty($diff)) {
-                $s = 'Received invalid option';
-                $s .= count($diff) > 1 ? 's (' : ' (';
-                $s .= implode(', ', $diff);
-                $s .= ').';
-                $errors[] = $s;
-            }
-        }
-
-        // 5. Start the validation of the entries.
-        foreach ($params as $key => $value) {
-            switch ($key) {
-                case 'limit':
-                case 'offset':
-                    if (!is_integer($value)) {
-                        $errors[] = 'Invalid value for ' . $key . ': expected integer, received ' . gettype($value) . '.';
-                    }
-                    break;
-                case 'deleted':
-                    if (!is_bool($value)) {
-                        $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
-                    }
-                    break;
-                case 'filter':
-                case 'order':
-                    // 6. Check that the value is an array.
-                    if (!is_array($value)) {
-                        $errors[] = 'Invalid value for ' . $key . ': expected array, received ' . gettype($value) . '.';
-                        break;
-                    }
-                    // 7. Check that each key is a valid field for the record type.
-                    foreach($value as $field => $value) {
-                        if(!array_key_exists($field, $record_type_definition)) {
-                            $errors[] = 'Invalid field for record_type ' . $record_type . ': ' . $field . '.';
-                            continue;
-                        }
-                        // 8. If filter, each value is valid for the field type.
-                        if ($key === 'filter') {
-                            if(!$this->field_types[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
-                                $errors[] = 'Invalid data for filter field: ' . $field . '.';
-                            }
-                        // 9. If order, each value is a boolen.
-                        } else {
-                            if(!is_bool($value)) {
-                                $errors[] = 'Invalid value for ordering ' . $field . ': expected boolean, received ' . gettype($value) . '.';
-                            }
-                        }
-                    }
-                    break;
-                default:
-                    //do nothing, we've caught this already
-            }
-        }
-        if(empty($errors)) {
-            return '';
-        } else {
-            // make the return string here.
-            $errmsg = "Received invalid search parameters: ";
-            return $errmsg . implode("\n - ", $errors);
-        }
-    }
-
-    /**
      * Returns all records which share a relationship with the record identified by $record_id.
      * See \fijma\Mu\Store for documentation.
      */
@@ -422,6 +323,41 @@ class Mu
         $errors = $this->validate_related_parameters($params);
         if ($errors) throw new \Exception($errors);
         return $this->store->related($record_id, $params);
+    }
+
+    /**
+     * Changes a record type definition and performs necessary data migrations.
+     * See \fijma\Mu\Store for documentation.
+     */
+    public function amend_recordtype(string $record_type, array $params, string $log, bool $force_changes = false)
+    {
+        $errors = $this->validate_amend_recordtype_parameters($params);
+        if ($errors) throw new \Exception($errors);
+        if (!$this->store->amend_recordtype($record_type, $params, $log, $force_changes)) {
+            throw new \Exception('Could not amend record type, see log for details: ' . $log . '.');
+        }
+    }
+
+    /**
+     * Returns the version history for the given record.
+     */
+    public function versions($record_id)
+    {
+        return $this->store->versions($record_id);
+    }
+
+    /**
+     * Returns the record type definition for the given record type.
+     */
+    protected function get_record_type_definition(string $record_type, bool $search_deregistered = true)
+    {
+        if(array_key_exists($record_type, $this->record_types)) {
+            return $this->record_types[$record_type];
+        } elseif($search_deregistered && array_key_exists($record_type, $this->deregistered_record_types)) {
+            return $this->deregistered_record_types[$record_type];
+        } else {
+            return 'Record type ' . $record_type . ' does not exist.';
+        }
     }
 
     /**
@@ -517,25 +453,111 @@ class Mu
     }
 
     /**
-     * Returns the version history for the given record.
+     * Validates arguments for the find function.
+     * A valid record type is:
+     *     0. A string
+     *     1. Is a valid record type (can be deregistered)
+     * A valid parameter array is:
+     *     2. An array
+     *     3. If it's not empty, it can only have the following keys: ['filter', 'order', 'limit', 'offset', 'deleted']
+     *     4. For each item, perform the following validations:
+     *         4.1. If filter or order, confirm:
+     *             4.1.1. The value is an array
+     *             4.1.2. For each item in the array, confirm:
+     *                 4.1.2.1. Each key in the array is a valid field for the given record type
+     *                 4.1.2.2. If filter, each value in the array is valid for the field type
+     *                 4.1.2.3. If order, each value in the array is a boolean
+     *         4.2. If limit or offset, confirm the value is an integer
+     *         4.3. If delete, confirm the value is a boolean
      */
-    public function versions($record_id)
+    protected function validate_find_parameters(string $record_type, array $params): string
     {
-        return $this->store->versions($record_id);
+        $errors = [];
+
+        // 0. If it's not a string, we haven't even started because of the type declaration.
+        // 1. Similarly, if we can't find the record type, bomb out.
+        $record_type_definition = $this->get_record_type_definition($record_type);
+        if (is_string($record_type_definition)) {
+            return 'Record type ' . $record_type . ' does not exist.';
+        }
+
+        // 2. If it's not an array, we haven't even started because of the type declaration.
+        // 3. First, if empty we're good to go.
+        if (empty($params)) {
+            return '';
+        // 4. Otherwise, check that our keys are good.
+        } else {
+            $expected_keys = ['deleted', 'filter', 'limit', 'offset', 'order'];
+            $diff = array_diff(array_keys($params), $expected_keys);
+            if (!empty($diff)) {
+                $s = 'Received invalid option';
+                $s .= count($diff) > 1 ? 's (' : ' (';
+                $s .= implode(', ', $diff);
+                $s .= ').';
+                $errors[] = $s;
+            }
+        }
+
+        // 5. Start the validation of the entries.
+        foreach ($params as $key => $value) {
+            switch ($key) {
+                case 'limit':
+                case 'offset':
+                    if (!is_integer($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected integer, received ' . gettype($value) . '.';
+                    }
+                    break;
+                case 'deleted':
+                    if (!is_bool($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected boolean, received ' . gettype($value) . '.';
+                    }
+                    break;
+                case 'filter':
+                case 'order':
+                    // 6. Check that the value is an array.
+                    if (!is_array($value)) {
+                        $errors[] = 'Invalid value for ' . $key . ': expected array, received ' . gettype($value) . '.';
+                        break;
+                    }
+                    // 7. Check that each key is a valid field for the record type.
+                    foreach($value as $field => $value) {
+                        if(!array_key_exists($field, $record_type_definition)) {
+                            $errors[] = 'Invalid field for record_type ' . $record_type . ': ' . $field . '.';
+                            continue;
+                        }
+                        // 8. If filter, each value is valid for the field type.
+                        if ($key === 'filter') {
+                            if(!$this->field_types[$record_type_definition[$field][0]]->validate($value, $record_type_definition[$field][0])) {
+                                $errors[] = 'Invalid data for filter field: ' . $field . '.';
+                            }
+                        // 9. If order, each value is a boolen.
+                        } else {
+                            if(!is_bool($value)) {
+                                $errors[] = 'Invalid value for ordering ' . $field . ': expected boolean, received ' . gettype($value) . '.';
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    //do nothing, we've caught this already
+            }
+        }
+
+        if(empty($errors)) {
+            return '';
+        } else {
+            // make the return string here.
+            $errmsg = "Received invalid search parameters: ";
+            return $errmsg . implode("\n - ", $errors);
+        }
     }
 
     /**
-     * Returns the record type definition for the given record type.
+     * Validates arguments for the amend_recordtype function.
      */
-    protected function get_record_type_definition(string $record_type, bool $search_deregistered = true)
+    protected function validate_amend_recordtype_parameters(array $params): string
     {
-        if(array_key_exists($record_type, $this->record_types)) {
-            return $this->record_types[$record_type];
-        } elseif($search_deregistered && array_key_exists($record_type, $this->deregistered_record_types)) {
-            return $this->deregistered_record_types[$record_type];
-        } else {
-            return 'Record type ' . $record_type . ' does not exist.';
-        }
+        
     }
 
 }

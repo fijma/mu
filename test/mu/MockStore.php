@@ -201,6 +201,6 @@ class MockStore implements Store
         return null;
     }
 
-
+    public function amend_record_type(string $record_type, array $params, string $log, bool $force_changes): \boolean{}
 
 }
